@@ -1,0 +1,14 @@
+<h3>Signup here</h3>
+<hr>
+<form action="" method="POST", enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p}}
+    {% if messages %}
+        <div class="success alert alert-success">
+            {% for message in messages %}
+                {{ message }}
+            {% endfor %}
+        </div>
+    {% endif %}
+    <button type="submit">Register</button>
+</form>

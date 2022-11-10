@@ -1,0 +1,31 @@
+{% extends 'accounts/base.html' %}
+
+{% block content %}
+<div class="container-sm">
+    <div style="width: 25rem; align-items: center;">
+        <div class="card-body">
+            <form action="{% url 'login' %}" method="POST">
+                {% csrf_token %}
+                {{ error }}
+                {% if messages %}
+                    <div class="error alert alert-success">
+                        {% for message in messages %}
+                            {{ message }}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+                <label for="exampleInputEmail1" class="form-label">Username</label>
+                <input type="text" class="form-control" id="exampleInputEmail1" name="username">
+
+                <label class="form-label">Password</label>
+                <input type="password" class="form-control" name="password">
+                    
+                <button type="submit">Login</button>
+            </form>
+        </div>
+        <p>Don't have an account? <a href="signup/">Signup here</a></p>
+        <a href="/password_reset">Forgot password?</a>
+    </div>
+</div>
+
+{% endblock %}
