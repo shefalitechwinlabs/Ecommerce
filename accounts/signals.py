@@ -7,4 +7,4 @@ from .models import ExtendUser
 @receiver(post_save, sender=ExtendUser)
 def profile(sender, instance, created, **kwrgs):
     if created:
-        Profile.objects.create(name=instance)
+        Profile.objects.create(created_by=instance)

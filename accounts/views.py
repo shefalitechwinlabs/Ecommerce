@@ -25,21 +25,23 @@ def home(request):
 def profile(request):
     if 'username' in request.session:
         context = {}
-        profile = Profile.objects.get(name=request.user)
-        fullname = profile.name.first_name +' '+ profile.name.last_name # Get first and last name from user model
+        profile = Profile.objects.get(created_by=request.user)
+        fullname = profile.created_by.first_name +' '+ profile.created_by.last_name # Get first and last name from user model
         context = {'dataset': profile, 'fullname': fullname}
         return render(request, 'main/profile.html', context)
 
 def signup(request):
+    form = SignupForm()
+    context = {'form': form}
     if request.method == 'POST':
-        form = SignupForm(request.POST, request.FILES)
+        form = SignupForm(request.POST)
         if form.is_valid():
             user = form.save(commit=False)
             password = form.cleaned_data['password']
             user.set_password(password)
             user.save()
             messages.success(request, 'Profile created. You can log in now!')    
-            return redirect('login')
+            return render(request, 'accounts/signup.html', context)
     else:
         form = SignupForm()
     context = {'form': form}

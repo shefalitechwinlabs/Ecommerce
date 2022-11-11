@@ -1,14 +1,32 @@
-<h3>Signup here</h3>
-<hr>
-<form action="" method="POST", enctype="multipart/form-data">
-    {% csrf_token %}
-    {{ form.as_p}}
-    {% if messages %}
-        <div class="success alert alert-success">
-            {% for message in messages %}
-                {{ message }}
-            {% endfor %}
-        </div>
-    {% endif %}
-    <button type="submit">Register</button>
-</form>
+{% extends 'accounts/base.html' %}
+
+{% block content %}
+    <h3 style="text-align:center;">Account Creation!</h3>
+    <div class="container">
+            <div class="card-body" style="width: min-content; margin-left: auto; margin-right: auto;">
+                <form method="POST">
+                    {% csrf_token %}
+                    {% if form.errors %}
+                        <div class="error alert alert-danger">
+                            {{ form.errors }}
+                        </div>
+                    {% endif %} 
+                    <!-- form with loop -->
+                    {% for item in form %}           
+                        <p>{{ item }}</p>                       
+                    {% endfor %}
+                    {% if messages %}
+                        <div class="success alert alert-success">
+                            {% for message in messages %}
+                                {{ message }}
+                            {% endfor %}
+                        </div>
+                    {% endif %} 
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="d-grid gap-2 btn btn-outline-dark">Register</button>
+                    </div>
+                </form>
+                <p style="margin-top: 1em;">Already have an account! <a href="/" class="text-dark">Login</a></p>
+            </div>
+    </div>
+{% endblock %}
