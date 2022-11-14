@@ -1,7 +1,7 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib import auth
-from .forms import SignupForm
+from .forms import *
 from django.contrib.auth.tokens import default_token_generator
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
@@ -25,16 +25,64 @@ def home(request):
 def profile(request):
     if 'username' in request.session:
         context = {}
-        profile = Profile.objects.get(created_by=request.user)
-        fullname = profile.created_by.first_name +' '+ profile.created_by.last_name # Get first and last name from user model
-        context = {'dataset': profile, 'fullname': fullname}
+        form = AddressForm()
+        profile_obj = Profile.objects.get(created_by=request.user)
+        fullname = profile_obj.created_by.first_name +' '+ profile_obj.created_by.last_name # Get first and last name from user model
+        address_obj = Address.objects.filter(created_by=request.user)
+        #address = address_obj.address +','+  address_obj.city +','+ address_obj.district +','+ address_obj.state +','+ address_obj.pincode
+        # click event address form
+        if request.method == 'POST':
+            form = AddressForm(request.POST)
+            #print(dict(request.POST.items()))
+            if form.is_valid():
+                address = form.save(commit=False)
+                address.created_by = request.user
+                address.save()
+                messages.success(request, 'Profile updated')    
+                return redirect('/profile')
+            else:
+                form = AddressForm()
+                context = {'dataset': profile_obj, 'fullname':fullname, 'form': form}
+                return render(request, 'main/profile.html', context)
+        context = {'dataset': profile_obj, 'fullname':fullname, 'address':address_obj, 'form':form}
         return render(request, 'main/profile.html', context)
+
+def address_edit(request, id):
+    if 'username' in request.session:
+        objects = get_object_or_404(Profile, id=id) 
+
+        if request.method == 'POST':
+            address_type = request.POST['address_type']
+            building = request.POST['building']
+            locality = request.POST['locality']
+            sector = request.POST['sector']
+            contact = request.POST['contact']
+            city = request.POST['city']
+            district = request.POST['district']
+            state = request.POST['state']
+            pincode = request.POST['pincode']
+            sector = request.POST['sector']
+            objects.address_type = address_type
+            objects.building = building
+            objects.locality = locality
+            objects.sector = sector
+            objects.contact = contact
+            objects.city = city
+            objects.district = district
+            objects.state = state
+            objects.pincode = pincode
+            objects.save()
+            return render(request, 'main/profile.html')
+    else:
+        form = AddressForm()
+        
 
 def signup(request):
     form = SignupForm()
     context = {'form': form}
     if request.method == 'POST':
         form = SignupForm(request.POST)
+        #print(dict(request.POST.items()))
         if form.is_valid():
             user = form.save(commit=False)
             password = form.cleaned_data['password']

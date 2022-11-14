@@ -13,22 +13,32 @@ class SignupForm(forms.ModelForm):
    
     class Meta:
         model = ExtendUser
-        fields = ['username', 'first_name', 'last_name', 'email', 'password']
+        fields = ['username', 'first_name', 'last_name', 'email', 'password', 'confirm_password']
 
     # Password match validator function
-    def clean_password(self):
+    def clean(self):
         cleaned_data = super(SignupForm, self).clean()
+        #print(cleaned_data)
         password = cleaned_data.get('password')
         confirm_password = cleaned_data.get('confirm_password')
-        print(password,confirm_password)
+        print(confirm_password)
         if password and confirm_password:
             if password != confirm_password:
                 raise forms.ValidationError(
                     'password and confirm_password does not match'
                 )    
 
-class Address(forms.ModelForm):
+class AddressForm(forms.ModelForm):
+    building = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'building number'}))
+    city = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'city'}))
+    sector = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'sector or nagar'}))
+    district = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'district'}))
+    state = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'state'}))
+    pincode = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'pincode'}))
+    locality = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'locality/colony'}))
+    contact = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'contact'}))
+    
 
     class Meta:
         model = Address
-        fields = "__all__"
+        exclude = ['created_by', 'updated_on', 'updated_on']

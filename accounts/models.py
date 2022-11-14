@@ -10,7 +10,15 @@ class ExtendUser(AbstractUser):
         return self.username
 
 class Address(models.Model):
-    address = models.TextField(null=True)
+    choice = [
+        ('home', 'Home'),
+        ('office', 'Office'),
+        ('other', 'Other'),
+    ]
+    address_type = models.CharField(max_length=20,choices=choice, default='Home')
+    building = models.TextField(null=True)
+    locality = models.CharField(max_length=50, null=True)
+    sector = models.CharField(max_length=50, null=True)
     contact = models.CharField(max_length=10)
     city = models.CharField(max_length=30)
     district = models.CharField(max_length=30)

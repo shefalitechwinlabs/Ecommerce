@@ -2,8 +2,119 @@
 
 {% block content %}
 <div class="container">
-  <p>{{fullname}}</p><hr>
-  <h5>About me</h5>
-  <p>{{dataset.name.bio}}</p>
+    <div class="row">
+        <div class="col-3">
+            <div class="card" style="width: 18rem;">
+                <img src="https://images.unsplash.com/photo-1511367461989-f85a21fda167?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8cHJvZmlsZXxlbnwwfHwwfHw%3D&w=1000&q=80" class="card-img-top" alt="profile pic">
+                <div class="card-body">
+                    <h5 class="card-title">{{fullname}}</h5>
+                </div>
+            </div>
+        </div>
+        <div class="col-6">
+            <p>{{dataset.name.bio}}</p>
+        </div>
+    </div>
+    <hr>
+    <button type="button" class="btn btn-outline-dark mb-2" data-bs-toggle="modal" data-bs-target="#exampleModal">
+        Add Address +
+    </button>
+    {% if address %}
+        <div class="row">
+            {% for item in address %}
+                <div class="col-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">{{item.address_type}} Address</h5>
+                            <p>{{item.building}}, {{item.locality}}, {{item.sector}}, {{item.address}}, {{item.city}}, Distt: {{item.district}}, {{item.state}}, {{item.pincode}}</p>
+                        </div>
+                        <a type="button" class="btn btn-outline-dark mb-2" data-bs-toggle="modal" href="#address_editModal">
+                            Edit Address
+                        </button>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Address</h1>
+                </div>
+                <div class="modal-body">
+                    <form method="POST">
+                        {% csrf_token %}
+                        {% if form.errors %}
+                            <div class="error alert alert-success">
+                                {{ form.errors }}
+                            </div>
+                        {% endif %} 
+                        <!-- form with loop -->
+                        {% for item in form %}           
+                            <p>{{ item }}</p>                       
+                        {% endfor %}
+                        {% if messages %}
+                            <div class="success alert alert-success">
+                                {% for message in messages %}
+                                    {{ message }}
+                                {% endfor %}
+                            </div>
+                        {% endif %} 
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-outline-dark" data-bs-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-outline-dark">Save</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Modal for edit address -->
+    <div class="modal fade" id="address_editModal" tabindex="-1" aria-labelledby="address_editModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="address_editModalLabel">Address</h1>
+                </div>
+                <div class="modal-body">
+                    <form method="POST">
+                        {% csrf_token %}
+                        {% if form.errors %}
+                            <div class="error alert alert-success">
+                                {{ form.errors }}
+                            </div>
+                        {% endif %} 
+                        <!-- form with loop -->      
+                        {% for item in address %}   
+                            {{ form.address_type.item.address_type }}
+                            {{ form.building.item.building }}
+                            {{ form.locality.item.locality }}
+                            {{ form.sector.item.sector }}
+                            {{ form.contact.item.contact }}                     
+                            {{ form.city.item.city }}
+                            {{ form.district.item.district }}
+                            {{ form.state.item.state}}
+                            {{ form.pincode.item.pincode }}
+                        {% endfor %}
+                        {% if messages %}
+                            <div class="success alert alert-success">
+                                {% for message in messages %}
+                                    {{ message }}
+                                {% endfor %}
+                            </div>
+                        {% endif %} 
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-outline-dark" data-bs-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-outline-dark">Save</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+
+
 {% endblock %}
