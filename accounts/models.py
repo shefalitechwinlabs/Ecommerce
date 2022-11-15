@@ -9,13 +9,14 @@ class ExtendUser(AbstractUser):
     def __str__(self):
         return self.username
 
-class Address(models.Model):
-    choice = [
-        ('home', 'Home'),
-        ('office', 'Office'),
-        ('other', 'Other'),
+address_choices = [
+        ('Home', 'home'),
+        ('Office', 'office'),
+        ('Other', 'other'),
     ]
-    address_type = models.CharField(max_length=20,choices=choice, default='Home')
+
+class Address(models.Model):
+    address_type = models.CharField(max_length=20,choices=address_choices, default='Home')
     building = models.TextField(null=True)
     locality = models.CharField(max_length=50, null=True)
     sector = models.CharField(max_length=50, null=True)

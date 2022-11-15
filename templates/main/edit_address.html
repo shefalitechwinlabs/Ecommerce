@@ -1,0 +1,36 @@
+{% extends 'main/base.html' %}
+
+{% block content %}
+<hr>
+<form method="POST">
+    {% csrf_token %}
+    {% if form.errors %}
+        <div class="error alert alert-success">
+            {{ form.errors }}
+        </div>
+    {% endif %} 
+    <!-- form with loop -->
+    <form action="/your-name/" method="post">
+        {% csrf_token %}
+        {% for field in form %}
+            <div class="fieldWrapper">
+                {{ field.errors }}
+                {{ field.label_tag }} 
+                <p>{{ field }}</p>
+            </div>
+        {% endfor %}
+    </form>
+    {% if messages %}
+        <div class="success alert alert-success">
+            {% for message in messages %}
+                {{ message }}
+            {% endfor %}
+        </div>
+    {% endif %} 
+    <div class="modal-footer">
+        <button type="submit" class="btn btn-outline-dark">Update Address</button>
+    </div>
+</form>
+
+
+{% endblock %}

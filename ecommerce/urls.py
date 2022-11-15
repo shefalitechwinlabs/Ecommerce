@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from accounts.views import home, profile
+from accounts.views import *
 from django.conf.urls.static import static
 from django.conf import settings
 
@@ -23,6 +23,8 @@ urlpatterns = [
     path('', include('accounts.urls')),
     path('home/', home, name='home'),
     path('profile/', profile, name='profile'),
+    #path('edit_profile/', edit_profile, name='edit_profile'),
+    path('edit_address/<id>', edit_address, name='edit_address'),
     path('admin/', admin.site.urls),
 ]
 if settings.DEBUG:

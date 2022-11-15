@@ -29,11 +29,9 @@ def profile(request):
         profile_obj = Profile.objects.get(created_by=request.user)
         fullname = profile_obj.created_by.first_name +' '+ profile_obj.created_by.last_name # Get first and last name from user model
         address_obj = Address.objects.filter(created_by=request.user)
-        #address = address_obj.address +','+  address_obj.city +','+ address_obj.district +','+ address_obj.state +','+ address_obj.pincode
         # click event address form
         if request.method == 'POST':
             form = AddressForm(request.POST)
-            #print(dict(request.POST.items()))
             if form.is_valid():
                 address = form.save(commit=False)
                 address.created_by = request.user
@@ -47,35 +45,26 @@ def profile(request):
         context = {'dataset': profile_obj, 'fullname':fullname, 'address':address_obj, 'form':form}
         return render(request, 'main/profile.html', context)
 
-def address_edit(request, id):
+def edit_address(request, id):
     if 'username' in request.session:
-        objects = get_object_or_404(Profile, id=id) 
+        objects = get_object_or_404(Address, id=id) 
+        query_address=Address.objects.get(id=id)
+        address_form_to_edit =AddressForm(request.POST or None, instance=query_address)
 
-        if request.method == 'POST':
-            address_type = request.POST['address_type']
-            building = request.POST['building']
-            locality = request.POST['locality']
-            sector = request.POST['sector']
-            contact = request.POST['contact']
-            city = request.POST['city']
-            district = request.POST['district']
-            state = request.POST['state']
-            pincode = request.POST['pincode']
-            sector = request.POST['sector']
-            objects.address_type = address_type
-            objects.building = building
-            objects.locality = locality
-            objects.sector = sector
-            objects.contact = contact
-            objects.city = city
-            objects.district = district
-            objects.state = state
-            objects.pincode = pincode
-            objects.save()
-            return render(request, 'main/profile.html')
-    else:
-        form = AddressForm()
         
+        if request.method == 'POST':
+            if address_form_to_edit.is_valid():
+                address_form_to_edit.save()
+            messages.success(request, 'Address updated')
+            return redirect('/profile')
+        else:
+            form = address_form_to_edit
+            context = {
+                'address': query_address,
+                'form': form,
+            }
+            return render(request, 'main/edit_address.html', context)
+    return redirect('/')
 
 def signup(request):
     form = SignupForm()

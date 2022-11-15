@@ -29,6 +29,7 @@ class SignupForm(forms.ModelForm):
                 )    
 
 class AddressForm(forms.ModelForm):
+    address_type = forms.CharField(widget=forms.Select(choices=address_choices,attrs={'placeholder': 'address_type'}))
     building = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'building number'}))
     city = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'city'}))
     sector = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'sector or nagar'}))
