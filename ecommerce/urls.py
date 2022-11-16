@@ -23,7 +23,8 @@ urlpatterns = [
     path('', include('accounts.urls')),
     path('home/', home, name='home'),
     path('profile/', profile, name='profile'),
-    #path('edit_profile/', edit_profile, name='edit_profile'),
+    path('edit_profile/', edit_profile, name='edit_profile'),
+    path('address_details/', address_details, name='address_details'),
     path('edit_address/<id>', edit_address, name='edit_address'),
     path('admin/', admin.site.urls),
 ]

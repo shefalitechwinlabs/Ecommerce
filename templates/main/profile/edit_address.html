@@ -1,0 +1,33 @@
+{% extends 'main/base.html' %}
+
+{% block content %}
+    <h3 class="text-center">Edit Address</h3>
+    <hr>
+    <!-- address form code -->
+    <form method="POST">
+        {% csrf_token %}
+        <!-- form error -->
+        {% if form.errors %}
+            <div class="error alert alert-success">
+                {{ form.errors }}
+            </div>
+        {% endif %} 
+        <!-- form with loop -->
+        {% for field in form %}
+            <div class="fieldWrapper">
+                {{ field.errors }}
+                {{ field.label_tag }} 
+                <p>{{ field }}</p>
+            </div>
+        {% endfor %}
+        <!-- form messages -->
+        {% if messages %}
+            <div class="success alert alert-success">
+                {% for message in messages %}
+                    {{ message }}
+                {% endfor %}
+            </div>
+        {% endif %}
+        <button type="submit" class="btn btn-outline-dark">Update Address</button>
+    </form>
+{% endblock %}

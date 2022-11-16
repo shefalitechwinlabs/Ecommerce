@@ -7,13 +7,11 @@ class SignupForm(forms.ModelForm):
     password = forms.CharField(widget=forms.PasswordInput(attrs={'placeholder': 'password'}),validators=[validate_password])
     confirm_password = forms.CharField(widget=forms.PasswordInput(attrs={'placeholder': 'confirm_password'}),validators=[validate_password])
     username = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'username'}))
-    first_name = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'first_name'}))
-    last_name = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'last_name'}))
     email = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'email'}))
    
     class Meta:
         model = ExtendUser
-        fields = ['username', 'first_name', 'last_name', 'email', 'password', 'confirm_password']
+        fields = ['username', 'email','password', 'confirm_password']
 
     # Password match validator function
     def clean(self):
@@ -42,4 +40,14 @@ class AddressForm(forms.ModelForm):
 
     class Meta:
         model = Address
+        exclude = ['created_by', 'updated_on', 'updated_on']
+
+class ProfileForm(forms.ModelForm):
+    name = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'name'}))
+    image = forms.ImageField()
+    bio = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'bio'}))
+    
+
+    class Meta:
+        model = Profile
         exclude = ['created_by', 'updated_on', 'updated_on']

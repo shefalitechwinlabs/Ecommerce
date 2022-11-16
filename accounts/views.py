@@ -16,9 +16,7 @@ from .models import *
 def home(request):
     if 'username' in request.session:
         user = request.user
-        name = user.first_name+' '+user.last_name
-        user = request.user
-        return render(request, 'main/home.html', {'name':name, 'user': user})
+        return render(request, 'main/home.html', {'user': user})
     else:
         return redirect('/')
 
@@ -27,7 +25,6 @@ def profile(request):
         context = {}
         form = AddressForm()
         profile_obj = Profile.objects.get(created_by=request.user)
-        fullname = profile_obj.created_by.first_name +' '+ profile_obj.created_by.last_name # Get first and last name from user model
         address_obj = Address.objects.filter(created_by=request.user)
         # click event address form
         if request.method == 'POST':
@@ -36,21 +33,40 @@ def profile(request):
                 address = form.save(commit=False)
                 address.created_by = request.user
                 address.save()
-                messages.success(request, 'Profile updated')    
+                messages.success(request, 'Address updated')    
                 return redirect('/profile')
             else:
                 form = AddressForm()
-                context = {'dataset': profile_obj, 'fullname':fullname, 'form': form}
-                return render(request, 'main/profile.html', context)
-        context = {'dataset': profile_obj, 'fullname':fullname, 'address':address_obj, 'form':form}
-        return render(request, 'main/profile.html', context)
+                context = {'dataset': profile_obj, 'form': form}
+                return render(request, 'main/profile/profile.html', context)
+        context = {'dataset': profile_obj, 'address':address_obj, 'form':form}
+        return render(request, 'main/profile/profile.html', context)
+
+def edit_profile(request):
+    if 'username' in request.session: 
+        query_profile=Profile.objects.get(created_by=request.user)
+        if request.method == 'POST':
+            profile_form = ProfileForm(request.POST, request.FILES, instance=query_profile)
+            if profile_form.is_valid():
+                profile_form.save()
+                messages.success(request, 'Profile updated')
+                return redirect('/profile')
+            else:
+                messages.error(request, 'Profile not valid', )
+                return render(request, 'main/profile/edit_profile.html', context)
+        else:
+            form = ProfileForm(instance=query_profile)
+            context = {
+                'profile': query_profile,
+                'form': form,
+            }
+            return render(request, 'main/profile/edit_profile.html', context)
+    return redirect('/')
 
 def edit_address(request, id):
-    if 'username' in request.session:
-        objects = get_object_or_404(Address, id=id) 
+    if 'username' in request.session: 
         query_address=Address.objects.get(id=id)
         address_form_to_edit =AddressForm(request.POST or None, instance=query_address)
-
         
         if request.method == 'POST':
             if address_form_to_edit.is_valid():
@@ -63,8 +79,33 @@ def edit_address(request, id):
                 'address': query_address,
                 'form': form,
             }
-            return render(request, 'main/edit_address.html', context)
+            return render(request, 'main/profile/edit_address.html', context)
     return redirect('/')
+
+def address_details(request):
+    if 'username' in request.session:
+        query_address=address_obj = Address.objects.filter(created_by=request.user)
+        if request.method == 'POST':
+            form = AddressForm(request.POST)
+            if form.is_valid():
+                address = form.save(commit=False)
+                address.created_by = request.user
+                address.save()
+                messages.success(request, 'Profile updated')    
+                return redirect('/profile')
+            else:
+                form = AddressForm()
+                context = {'address': query_address, 'form': form}
+                return render(request, 'main/profile/address_details.html', context)
+        else:
+            form = AddressForm()
+            context = {
+                'address': query_address,
+                'form': form,
+            }
+            return render(request, 'main/profile/address_details.html', context)
+    else:
+        return redirect('/')
 
 def signup(request):
     form = SignupForm()

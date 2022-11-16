@@ -1,0 +1,37 @@
+{% extends 'main/base.html' %}
+
+{% block content %}
+    <h3 class="text-center">Edit Profile</h3>
+    <hr>
+    <!-- profile code -->
+    {% if profile %}
+        <div class="card" style="width: 20rem;">
+            <div class="card-body">
+                <form method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <!-- form error-->
+                    {% if form.errors %}
+                        {% for field in form %}
+                            {% for error in field.errors %}
+                                <p> {{ error }} </p>
+                            {% endfor %}
+                        {% endfor %}
+                    {% endif %}
+                    <!-- form with loop -->
+                    {% for field in form %}
+                        <p> {{ field }} </p>
+                    {% endfor %}
+                    <!-- form messages -->
+                    {% if messages %}
+                        <div class="Danger alert alert-danger">
+                            {% for message in messages %}
+                                {{ message }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                    <button type="submit" class="btn btn-outline-dark">Update Profile</button>
+                </form>
+            </div>
+        </div>
+    {% endif %}   
+{% endblock %}

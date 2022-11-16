@@ -3,8 +3,6 @@ from django.contrib.auth.models import AbstractUser
 
 
 class ExtendUser(AbstractUser):
-    username = models.CharField(max_length=50, unique=True)
-    email = models.CharField(max_length=50, unique=True)
 
     def __str__(self):
         return self.username
@@ -36,9 +34,10 @@ class Address(models.Model):
         return self.created_by.username
 
 class Profile(models.Model):
-    bio = models.TextField(null=True)
-    image = models.ImageField(null=True)
-    created_by = models.ForeignKey(ExtendUser,on_delete=models.CASCADE, null=True)
+    name = models.CharField(max_length=150, default='name yet to be updated')
+    bio = models.TextField(default='bio yet to be updated')
+    image = models.ImageField(upload_to='profile_pics', default='profile_pics/no_image.png')
+    created_by = models.OneToOneField(ExtendUser,on_delete=models.CASCADE, null=True)
     created_on = models.DateTimeField(auto_now_add=True, blank=True, null=True)
     updated_on = models.DateTimeField(auto_now=True, blank=True, null=True)
 

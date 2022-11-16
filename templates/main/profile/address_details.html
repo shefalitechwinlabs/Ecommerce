@@ -1,0 +1,62 @@
+{% extends 'main/base.html' %}
+
+{% block content %}
+    <h3 class="text-center">Address details</h3>
+    <hr>
+    <!-- edit address if address available -->
+    {% if address %}
+        <div class="row">
+            {% for item in address %}
+                <div class="col-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">{{item.address_type}} Address</h5>
+                            <p>{{item.building}}, {{item.locality}}, {{item.sector}}, {{item.address}}, {{item.city}}, Distt: {{item.district}}, {{item.state}}, {{item.pincode}}</p>
+                        </div>
+                        <a class="btn btn-outline-dark mt-2" href="/edit_address/{{item.id}}">Edit Address</a>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <!-- if address not available -->
+        <button type="button" class="btn btn-outline-dark mt-2" data-bs-toggle="modal" data-bs-target="#addressModal">
+            Add Address +
+        </button>
+        <!-- Modal -->
+        <div class="modal fade" id="addressModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">Address</h1>
+                    </div>
+                    <div class="modal-body">
+                        <form method="POST">
+                            {% csrf_token %}
+                            {% if form.errors %}
+                                <div class="error alert alert-success">
+                                    {{ form.errors }}
+                                </div>
+                            {% endif %} 
+                            <!-- form with loop -->
+                            {% for item in form %}           
+                                <p>{{ item }}</p>                       
+                            {% endfor %}
+                            {% if messages %}
+                                <div class="success alert alert-success">
+                                    {% for message in messages %}
+                                        {{ message }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %} 
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-outline-dark" data-bs-dismiss="modal">Close</button>
+                                <button type="submit" class="btn btn-outline-dark">Save</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %} 
+{% endblock %}
