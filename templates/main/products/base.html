@@ -23,21 +23,21 @@
                     <div class="offcanvas-body">
                         <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
                             {% if profile %}
-                                <li class="nav-item dropdown" style="width:min-content">    
+                                <li class="nav-item dropdown">
                                     <img src="/media/{{profile.image}}"  style="border-radius: 100%; width: 200px;"></img>
                                     <p class="nav-link dropdown-toggle btn-outline-dark" role="button" data-bs-toggle="dropdown" aria-expanded="false">{{profile.name}}</p>
                                     <ul class="dropdown-menu">
-                                        <li><a class="dropdown-item btn btn-outline-dark" href="profile/">Profile</a></li>
-                                        <li><a class="dropdown-item btn btn-outline-dark" href="accounts/edit_address/">Update Address</a></li>
+                                        <li><a class="dropdown-item btn btn-outline-dark" href="/profile/">Profile</a></li>
+                                        <li><a class="dropdown-item btn btn-outline-dark" href="/address_details/">Update Address</a></li>
                                         <li>
                                             <hr class="dropdown-divider">
                                         </li>
-                                        <li><a class="dropdown-item btn btn-outline-dark" href="accounts/logout/">Logout</a></li>
+                                        <li><a class="dropdown-item btn btn-outline-dark" href="/accounts/logout/">Logout</a></li>
                                     </ul>
                                 </li>
                             {% else %}
                                 <li class="nav-item">
-                                    <a class="nav-link btn btn-outline-dark" aria-current="page" href="accounts/login/">Sign in</a>
+                                    <a class="nav-link btn btn-outline-dark" aria-current="page" href="/accounts/login/">Sign in</a>
                                 </li>
                             {% endif %}
                         </ul>
@@ -52,7 +52,7 @@
         <div class="container mt-5">
             {% block content %}
             {% endblock %}
-        <hr>
+            <hr>
         </div>
     </body>
     <footer>

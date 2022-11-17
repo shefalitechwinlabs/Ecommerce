@@ -40,6 +40,9 @@
         <a class="btn btn-outline-dark mb-2" data-bs-toggle="collapse" href="#address" role="button" aria-expanded="false" aria-controls="collapseExample">
             Address
         </a>
+        <a class="btn btn-outline-dark mb-2 ml-2" data-bs-toggle="collapse" href="#collections" role="button" aria-expanded="false" aria-controls="collapseExample">
+            My collections
+        </a>
     </p>
     <!-- address cards -->
     <div class="collapse" id="address">
@@ -61,8 +64,32 @@
             Add Address +
         </button>
     </div>
-  <!-- Modal -->
-  <div class="modal fade" id="addressModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <!-- my collections' cards-->
+    <div class="collapse" id="collection">
+        {% if collections %}
+            <div class="row">
+                {% for item in collections %}
+                    <div class="col-6">
+                        <div class="card">
+                            <img src="/media/{{item.image}}" class="card-img-top" alt="...">
+                            <div class="card-body">
+                                <h5 class="card-title">{{item.title}}</h5>
+                                <p class="card-text">{{item.description}}</p>
+                                <hr>
+                                <p class="card-text">Rs.{{item.price}}</p>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+        <button type="button" class="btn btn-outline-dark mt-2" data-bs-toggle="modal" data-bs-target="#addressModal">
+            Add Address +
+        </button>
+    </div>
+
+    <!-- Modal for add address-->
+    <div class="modal fade" id="addressModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">

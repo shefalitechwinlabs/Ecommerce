@@ -1,0 +1,54 @@
+{% extends 'main/base.html' %}
+
+{% block content %}
+    {% if messages %}
+        <div class="success alert alert-success">
+            {% for message in messages %}
+                {{ message }}
+            {% endfor %}
+        </div>
+    {% endif %}
+    {% autoescape on %}
+        <div class="text-center" style="margin-top: 100px;">
+            <h1>Welcome to Shopmania!</h1>
+        </div>
+        <div class="row row-cols-1 row-cols-md-2 g-4">
+            <div class="col">
+                <div class="card">
+                    <img src="https://i.pinimg.com/originals/fd/56/fe/fd56fe106a889d7842bd4e519a95d5c8.jpg" class="card-img-top" alt="...">
+                    <div class="card-body">
+                        <h5 class="card-title">Electrnoic</h5>
+                        <a class="card-text" href="electronics/">Available items ></a>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card">
+                    <img src="https://e7.pngegg.com/pngimages/254/561/png-clipart-online-shopping-dubai-black-friday-perfume-dubai-gadget-electronics.png" class="card-img-top" alt="...">
+                    <div class="card-body">
+                        <h5 class="card-title">Gadgets</h5>
+                        <a class="card-text" href="gadgets/">Available items ></a>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card">
+                    <img src="https://www.thetrendspotter.net/wp-content/uploads/2016/06/Nordstrom-1.jpg" class="card-img-top" alt="...">
+                    <div class="card-body">
+                        <h5 class="card-title">Fashion</h5>
+                        <a class="card-text" href="fashion/">Available items ></a>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card">
+                    <img src="https://assets-news.housing.com/news/wp-content/uploads/2022/01/31200633/Vastu-home-decorative-items-to-bring-harmony-and-positive-energies-FB-1200x700-compressed.jpg" class="card-img-top" alt="...">
+                    <div class="card-body">
+                        <h5 class="card-title">Home</h5>
+                        <a class="card-text" href="home_uses/">Available items ></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endautoescape %}
+{% endblock %}

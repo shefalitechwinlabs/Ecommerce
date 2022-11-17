@@ -13,13 +13,6 @@ from django.http import HttpResponse
 from .models import *
 
 
-def home(request):
-    if 'username' in request.session:
-        user = request.user
-        return render(request, 'main/home.html', {'user': user})
-    else:
-        return redirect('/')
-
 def profile(request):
     if 'username' in request.session:
         context = {}
@@ -38,9 +31,9 @@ def profile(request):
             else:
                 form = AddressForm()
                 context = {'dataset': profile_obj, 'form': form}
-                return render(request, 'main/profile/profile.html', context)
+                return render(request, 'accounts/profile/profile.html', context)
         context = {'dataset': profile_obj, 'address':address_obj, 'form':form}
-        return render(request, 'main/profile/profile.html', context)
+        return render(request, 'accounts/profile/profile.html', context)
 
 def edit_profile(request):
     if 'username' in request.session: 
@@ -53,14 +46,14 @@ def edit_profile(request):
                 return redirect('/profile')
             else:
                 messages.error(request, 'Profile not valid', )
-                return render(request, 'main/profile/edit_profile.html', context)
+                return render(request, 'accounts/profile/edit_profile.html', context)
         else:
             form = ProfileForm(instance=query_profile)
             context = {
                 'profile': query_profile,
                 'form': form,
             }
-            return render(request, 'main/profile/edit_profile.html', context)
+            return render(request, 'accounts/profile/edit_profile.html', context)
     return redirect('/')
 
 def edit_address(request, id):
@@ -79,7 +72,7 @@ def edit_address(request, id):
                 'address': query_address,
                 'form': form,
             }
-            return render(request, 'main/profile/edit_address.html', context)
+            return render(request, 'accounts/profile/edit_address.html', context)
     return redirect('/')
 
 def address_details(request):
@@ -96,14 +89,14 @@ def address_details(request):
             else:
                 form = AddressForm()
                 context = {'address': query_address, 'form': form}
-                return render(request, 'main/profile/address_details.html', context)
+                return render(request, 'accounts/profile/address_details.html', context)
         else:
             form = AddressForm()
             context = {
                 'address': query_address,
                 'form': form,
             }
-            return render(request, 'main/profile/address_details.html', context)
+            return render(request, 'accounts/profile/address_details.html', context)
     else:
         return redirect('/')
 

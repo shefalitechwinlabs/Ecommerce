@@ -1,0 +1,27 @@
+{% extends 'main/products/base.html' %}
+
+{% block content %}
+
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        {% for item in products %}
+            <div class="col">
+                <div class="card">
+                    <img src="/media/{{item.image}}" class="card-img-top" alt="...">
+                    <div class="card-body">
+                        <h5 class="card-title">{{item.title}}</h5>
+                        <p class="card-text">{{item.description}}</p>
+                        <hr>
+                        <div class="row">
+                            <div class="col-6">
+                                <p class="card-text"><strong>Rs. {{item.price}}</strong></p>
+                            </div>
+                            <div class="col-6">
+                                <a type="button" href="/add_to_collections/{{item.id}}" class="btn btn-outline-dark">Add to my collection</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}
