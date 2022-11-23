@@ -2,119 +2,128 @@
 
 {% block content %}
 <!-- profile code -->
-<div class="container">
-    <div class="row">
-        <div class="col-11">
-            <div class="card" style="width: 18rem;">
-                <img src="/media/{{dataset.image}}" class="card-img-top" alt="profile pic">
-                <div class="card-body">
-                    <h5 class="card-title">{{dataset.name}}</h5>
-                    <p>{{dataset.bio}}</p>
+<div class="row mt-2" >
+    <div class="col-11">
+        <div class="card" style="width: 18rem;">
+            <img src="/media/{{profile.image}}" class="card-img-top" alt="profile pic">
+            <div class="card-body">
+                <h5 class="card-title">{{profile.name}}</h5>
+                <p>{{profile.bio}}</p>
+            </div>
+        </div>
+    </div>
+    <!-- edit button -->
+    <div class="col-1">
+        <div class="dropdown">
+            <button class="btn btn-outline-dark dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Edit
+            </button>
+            <ul class="dropdown-menu">
+            <a class="btn btn-outline-dark" href="/edit_profile">Update Profile</a>
+            <a class="btn btn-outline-dark" href="/address_details">Update Address</a>
+            </ul>
+        </div>
+    </div>
+    <!-- messages -->
+    {% if messages %}
+        {% for message in messages %}
+            <div class="messages {{message.tags}} alert alert-{{message.tags}}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+</div>
+<hr>
+<!-- address code -->
+<p>
+    <a class="btn btn-outline-dark mb-2" data-bs-toggle="collapse" href="#address" role="button" aria-expanded="false" aria-controls="collapseExample">
+        Address
+    </a>
+    <a class="btn btn-outline-dark mb-2" data-bs-toggle="collapse" href="#collections" role="button" aria-expanded="false" aria-controls="collapseExample">
+        My collections
+    </a>
+</p>
+<!-- address cards -->
+<div class="collapse" id="address">
+    {% if address %}
+        <div class="row">
+            {% for item in address %}
+                <div class="col-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">{{item.address_type}} Address</h5>
+                            <p>{{item.building}}, {{item.locality}}, {{item.sector}}, {{item.city}}, Distt: {{item.district}}, {{item.state}}, {{item.pincode}}, {{item.contact}}</p>
+                        </div>
+                    </div>
                 </div>
-            </div>
+            {% endfor %}
         </div>
-        <!-- edit button -->
-        <div class="col-1">
-            <div class="dropdown">
-                <button class="btn btn-outline-dark dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                Edit
-                </button>
-                <ul class="dropdown-menu">
-                <a class="btn btn-outline-dark" href="/edit_profile">Update Profile</a>
-                <a class="btn btn-outline-dark" href="/address_details">Update Address</a>
-                </ul>
-            </div>
-        </div>
-        <!-- messages -->
-        {% if messages %}
-            <div class="success alert alert-success">
-                {% for message in messages %}
-                    {{ message }}
-                {% endfor %}
-            </div>
-        {% endif %} 
-    </div>
-    <hr>
-    <!-- address code -->
-    <p>
-        <a class="btn btn-outline-dark mb-2" data-bs-toggle="collapse" href="#address" role="button" aria-expanded="false" aria-controls="collapseExample">
-            Address
-        </a>
-        <a class="btn btn-outline-dark mb-2 ml-2" data-bs-toggle="collapse" href="#collections" role="button" aria-expanded="false" aria-controls="collapseExample">
-            My collections
-        </a>
-    </p>
-    <!-- address cards -->
-    <div class="collapse" id="address">
-        {% if address %}
-            <div class="row">
-                {% for item in address %}
-                    <div class="col-6">
-                        <div class="card">
-                            <div class="card-body">
-                                <h5 class="card-title">{{item.address_type}} Address</h5>
-                                <p>{{item.building}}, {{item.locality}}, {{item.sector}}, {{item.city}}, Distt: {{item.district}}, {{item.state}}, {{item.pincode}}, {{item.contact}}</p>
+    {% endif %}
+    <button type="button" class="btn btn-outline-dark mt-2" data-bs-toggle="modal" data-bs-target="#addressModal">
+        Add Address +
+    </button>
+</div>
+<!-- my collections' cards-->
+<div class="collapse" id="collections">
+    {% if collections %}
+        <div class="row">
+            {% for item in collections %}
+                <div class="col-6">
+                    <div class="card">
+                        <img src="/media/{{item.product.image}}" class="card-img-top" alt="...">
+                        <div class="card-body">
+                            <h5 class="card-title">{{item.product.title}}</h5>
+                            <p class="card-text">{{item.product.description}}</p>
+                            <hr>
+                            <div class="row">
+                                <div class="col-7">
+                                    <p class="card-text"><strong>Rs. {{item.product.price}}</strong></p>
+                                </div>
+                                <div class="col-5">
+                                    <a type="button" href="/remove_collections/{{item.id}}" class="btn btn-outline-dark">Remove from collection</a>
+                                </div>
                             </div>
                         </div>
                     </div>
-                {% endfor %}
-            </div>
-        {% endif %}
-        <button type="button" class="btn btn-outline-dark mt-2" data-bs-toggle="modal" data-bs-target="#addressModal">
-            Add Address +
-        </button>
-    </div>
-    <!-- my collections' cards-->
-    <div class="collapse" id="collection">
-        {% if collections %}
-            <div class="row">
-                {% for item in collections %}
-                    <div class="col-6">
-                        <div class="card">
-                            <img src="/media/{{item.image}}" class="card-img-top" alt="...">
-                            <div class="card-body">
-                                <h5 class="card-title">{{item.title}}</h5>
-                                <p class="card-text">{{item.description}}</p>
-                                <hr>
-                                <p class="card-text">Rs.{{item.price}}</p>
-                            </div>
-                        </div>
-                    </div>
-                {% endfor %}
-            </div>
-        {% endif %}
-        <button type="button" class="btn btn-outline-dark mt-2" data-bs-toggle="modal" data-bs-target="#addressModal">
-            Add Address +
-        </button>
-    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+    <a type="button" class="btn btn-outline-dark mt-2" href="/">
+        Add Collections +
+    </a>
+    <a type="button" class="btn btn-outline-dark mt-2" href="/clear_collections">
+        Clear Collections
+    </a>
+</div>
 
-    <!-- Modal for add address-->
-    <div class="modal fade" id="addressModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="exampleModalLabel">Address</h1>
-                </div>
-                <div class="modal-body">
-                    <form method="POST">
-                        {% csrf_token %}
-                        {% if form.errors %}
-                            <div class="error alert alert-success">
-                                {{ form.errors }}
-                            </div>
-                        {% endif %} 
-                        <!-- form with loop -->
-                        {% for item in form %}           
-                            <p>{{ item }}</p>                       
-                        {% endfor %}
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-outline-dark" data-bs-dismiss="modal">Close</button>
-                            <button type="submit" class="btn btn-outline-dark">Save</button>
+<!-- Modal for add address-->
+<div class="modal fade" id="addressModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Address</h1>
+            </div>
+            <div class="modal-body">
+                <form method="POST">
+                    {% csrf_token %}
+                    {% if form.errors %}
+                        <div class="error alert alert-success">
+                            {{ form.errors }}
                         </div>
-                    </form>
-                </div>
+                    {% endif %} 
+                    <!-- form with loop -->
+                    {% for item in form %}           
+                        <p>{{ item }}</p>                       
+                    {% endfor %}
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-dark" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-outline-dark">Save</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
 </div>
+
 {% endblock %}

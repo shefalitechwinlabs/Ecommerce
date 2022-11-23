@@ -8,11 +8,11 @@
             {% csrf_token %}
             {{ form.error}}
             {% if messages %}
-                <div class="error alert alert-danger">
-                    {% for message in messages %}
+                {% for message in messages %}
+                    <div class="messages {{message.tags}} alert alert-{{message.tags}}">
                         {{ message }}
-                    {% endfor %}
-                </div>
+                    </div>
+                {% endfor %}
             {% endif %}
             <input type="text" class="form-control" id="exampleInputEmail1" name="username" placeholder="username"><br>
             <input type="password" class="form-control" name="password" placeholder="password"><br>
@@ -20,7 +20,7 @@
                 <button type="submit" class="d-grid gap-2 btn btn-outline-dark">Login</button>
             </div>
         </form>
-    <p><a class="text-dark" href="signup/">Create new account? </a> or <a href="/password_reset" class="text-dark">Forgot password?</a></p>
+    <p><a class="text-dark" href="/accounts/signup/">Create new account? </a> or <a href="/password_reset" class="text-dark">Forgot password?</a></p>
     </div>
 </div>
 

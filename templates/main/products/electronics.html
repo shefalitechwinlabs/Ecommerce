@@ -1,7 +1,14 @@
-{% extends 'main/products/base.html' %}
+{% extends 'main/base.html' %}
 
 {% block content %}
-
+    <!-- messages -->
+    {% if messages %}
+        {% for message in messages %}
+            <div class="messages {{message.tags}} alert alert-{{message.tags}}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
     <div class="row row-cols-1 row-cols-md-3 g-4">
         {% for item in products %}
             <div class="col">
@@ -16,7 +23,7 @@
                                 <p class="card-text"><strong>Rs. {{item.price}}</strong></p>
                             </div>
                             <div class="col-6">
-                                <a type="button" href="/add_to_collections/{{item.id}}" class="btn btn-outline-dark">Add to my collection</a>
+                                <a type="button" href="/add_collections?id={{item.id}}&page=electronics" class="btn btn-outline-dark">Add to my collection</a>
                             </div>
                         </div>
                     </div>

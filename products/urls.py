@@ -4,10 +4,12 @@ from products.views import *
 
 urlpatterns = [
     path('', home, name='home'),
-    path('products/', products, name='products'),
-    path('electronics/', electrnoics, name='electrnoics'),
+    #path('products/', products, name='products'),
+    path('electronics/', electronics, name='electronics'),
     path('fashion/', fashion, name='fashion'),
     path('home_uses/', home_uses, name='home_uses'),
     path('gadgets/', gadgets, name='gadgets'),
-    path('add_to_my_collections/<id>', electronics_collections, name='electronics_collections')
+    path('add_collections/', add_collections, name='add_collections'),
+    path('remove_collections/<id>', remove_collections, name='remove_collections'),
+    path('clear_collections/', clear_collections, name='clear_collections')
 ]

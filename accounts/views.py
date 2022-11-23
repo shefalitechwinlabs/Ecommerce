@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib import auth
 from .forms import *
@@ -11,14 +11,20 @@ from django.template.loader import render_to_string
 from django.db.models.query_utils import Q
 from django.http import HttpResponse
 from .models import *
+from products.models import Collections
+from django.template.loader import get_template
+from django.core.mail import EmailMultiAlternatives
+from django.core.mail import send_mail
 
 
 def profile(request):
     if 'username' in request.session:
         context = {}
+        user = request.user
         form = AddressForm()
-        profile_obj = Profile.objects.get(created_by=request.user)
-        address_obj = Address.objects.filter(created_by=request.user)
+        profile_obj = Profile.objects.get(created_by=user)
+        address_obj = Address.objects.filter(created_by=user)
+        product = Collections.objects.filter(added_by=user)
         # click event address form
         if request.method == 'POST':
             form = AddressForm(request.POST)
@@ -30,10 +36,12 @@ def profile(request):
                 return redirect('/profile')
             else:
                 form = AddressForm()
-                context = {'dataset': profile_obj, 'form': form}
+                context = {'dataset': profile_obj, 'form': form, 'collections': product}
                 return render(request, 'accounts/profile/profile.html', context)
-        context = {'dataset': profile_obj, 'address':address_obj, 'form':form}
+        context = {'profile': profile_obj, 'address': address_obj, 'form': form, 'collections':product}
         return render(request, 'accounts/profile/profile.html', context)
+    else:
+        return redirect('/accounts/login')
 
 def edit_profile(request):
     if 'username' in request.session: 
@@ -100,6 +108,9 @@ def address_details(request):
     else:
         return redirect('/')
 
+def activateEmail(request, user, to_email):
+    messages.success(request, f'Dear <b>{user}</b>, please go to your email <b>{to_email}</b> inbox and click on received activation link to confirm and complete the registration. <b>Note:</b> Check your spam folder.')
+
 def signup(request):
     form = SignupForm()
     context = {'form': form}
@@ -111,8 +122,18 @@ def signup(request):
             password = form.cleaned_data['password']
             user.set_password(password)
             user.save()
+            username = form.cleaned_data.get('username')
+            email = form.cleaned_data.get('email')
+            # mail system
+            htmly = get_template('accounts/email.html')
+            d = { 'username': username }
+            subject, from_email, to = 'welcome', 'shefali.techwinlabs@gmail.com', email
+            html_content = htmly.render(d)
+            msg = EmailMultiAlternatives(subject, html_content, from_email, [to])
+            msg.attach_alternative(html_content, "text/html")
+            msg.send()
             messages.success(request, 'Profile created. You can log in now!')    
-            return render(request, 'accounts/signup.html', context)
+            return redirect('/accounts/login')
     else:
         form = SignupForm()
     context = {'form': form}
