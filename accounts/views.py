@@ -12,9 +12,9 @@ from django.db.models.query_utils import Q
 from django.http import HttpResponse
 from .models import *
 from products.models import Collections
-from django.template.loader import get_template
-from django.core.mail import EmailMultiAlternatives
-from django.core.mail import send_mail
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.contrib.sites.shortcuts import get_current_site
+
 
 
 def profile(request):
@@ -108,51 +108,82 @@ def address_details(request):
     else:
         return redirect('/')
 
-def activateEmail(request, user, to_email):
-    messages.success(request, f'Dear <b>{user}</b>, please go to your email <b>{to_email}</b> inbox and click on received activation link to confirm and complete the registration. <b>Note:</b> Check your spam folder.')
-
 def signup(request):
     form = SignupForm()
     context = {'form': form}
     if request.method == 'POST':
         form = SignupForm(request.POST)
-        #print(dict(request.POST.items()))
         if form.is_valid():
             user = form.save(commit=False)
             password = form.cleaned_data['password']
             user.set_password(password)
+            user.is_active = False
             user.save()
-            username = form.cleaned_data.get('username')
-            email = form.cleaned_data.get('email')
-            # mail system
-            htmly = get_template('accounts/email.html')
-            d = { 'username': username }
-            subject, from_email, to = 'welcome', 'shefali.techwinlabs@gmail.com', email
-            html_content = htmly.render(d)
-            msg = EmailMultiAlternatives(subject, html_content, from_email, [to])
-            msg.attach_alternative(html_content, "text/html")
-            msg.send()
-            messages.success(request, 'Profile created. You can log in now!')    
-            return redirect('/accounts/login')
+            # email verification mail system
+            data = form.cleaned_data['email']
+            associated_users = ExtendUser.objects.filter(email=data)
+            if associated_users.exists():
+                    for user in associated_users:
+                        subject = "Verify Your Email"
+                        email_template_name = "accounts/email_verification/email_verification_instruction.html"
+                        c = {
+                            "email": user.email,
+                            'domain': '127.0.0.1:8000',
+                            'site_name': 'Website',
+                            "uid": urlsafe_base64_encode(force_bytes(user.pk)),
+                            "user": user,
+                            'token': default_token_generator.make_token(user),
+                            'protocol': 'http',
+                        }
+                        email = render_to_string(email_template_name, c)
+                        try:
+                            send_mail(subject, email, 'admin@example.com',
+                                    [user.email], fail_silently=False)
+                        except BadHeaderError:
+                            return HttpResponse('Invalid header found.')
+                        return redirect("/accounts/email_verification/done")
+        else:
+            form = SignupForm()
+            context = {'form': form}
+            messages.error(request, 'Profile not registered successfully')
+            return render(request, 'accounts/signup.html', context)
     else:
         form = SignupForm()
     context = {'form': form}
     return render(request, 'accounts/signup.html', context)
 
+def email_verification_complete(request, uidb64, token):
+    User = ExtendUser()
+    try:
+        uid = urlsafe_base64_decode(uidb64)
+        user = ExtendUser.objects.get(pk=uid)
+    except(TypeError, ValueError, OverflowError, ExtendUser.DoesNotExist):
+        user = None
+    if user is not None and default_token_generator.check_token(user, token):
+        user.is_active = True
+        user.save()
+        return render(request, 'accounts/email_verification/email_verification_complete.html')
+    else:
+        return HttpResponse('Activation link is invalid!')
+
 def login(request):
     if 'username' in request.session:
-        return redirect('home/')
-    if request.method == 'POST':
+        return redirect('/')
+    elif request.method == 'POST':
         username = request.POST['username']
         password = request.POST['password']
         user = auth.authenticate(username = username, password = password)
+        user_created = ExtendUser.objects.get(username=username)
         if user is not None:
             auth.login(request, user)
             request.session['username'] = username
             messages.success(request, 'loggedin successfully')
             return redirect('home')
+        elif user_created.is_active == False:
+            messages.warning(request, 'Email verification pending')
+            return render(request,'accounts/login.html')
         else:
-            messages.error(request, 'Username or password is incorrect!')
+            messages.warning(request, 'Username or password is incorrect!')
             return render(request,'accounts/login.html')
     else:
         return render(request,'accounts/login.html')
@@ -166,16 +197,13 @@ def logout(request):
 def password_reset_request(request):
     if request.method == "POST":
         password_reset_form = PasswordResetForm(request.POST)
-        
         if password_reset_form.is_valid():
             data = password_reset_form.cleaned_data['email']
-            print(data)
-            associated_users = ExtendUser.objects.filter(Q(email=data))
-            
+            associated_users = ExtendUser.objects.filter(email=data)
             if associated_users.exists():
                 for user in associated_users:
                     subject = "Password Reset Requested"
-                    email_template_name = "accounts/password/password_reset_email.html"
+                    email_template_name = "accounts/password_reset/password_reset_email.html"
                     c = {
                         "email": user.email,
                         'domain': '127.0.0.1:8000',
@@ -191,6 +219,6 @@ def password_reset_request(request):
                                   [user.email], fail_silently=False)
                     except BadHeaderError:
                         return HttpResponse('Invalid header found.')
-                    return redirect("/password_reset/done/")
+                    return redirect("/accounts/password_reset/done/")
     password_reset_form = PasswordResetForm()
-    return render(request=request, template_name="accounts/password/password_reset.html", context={"password_reset_form": password_reset_form})
+    return render(request, template_name="accounts/password_reset/password_reset.html", context={"password_reset_form": password_reset_form})

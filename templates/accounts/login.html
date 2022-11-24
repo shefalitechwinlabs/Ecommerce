@@ -18,10 +18,13 @@
             <input type="password" class="form-control" name="password" placeholder="password"><br>
             <div class="d-grid gap-2">
                 <button type="submit" class="d-grid gap-2 btn btn-outline-dark">Login</button>
+                {% if user_created %}
+                    <a type="submit" class="text-dark" href="{% url 'email_verification_done' %}">Resend email verification</a>
+                {% endif %}
             </div>
         </form>
-    <p><a class="text-dark" href="/accounts/signup/">Create new account? </a> or <a href="/password_reset" class="text-dark">Forgot password?</a></p>
+    <p>
+        <a class="text-dark" href="/accounts/signup/">Create new account? </a> or <a href="/accounts/password_reset" class="text-dark">Forgot password?</a></p>
     </div>
 </div>
-
 {% endblock %}

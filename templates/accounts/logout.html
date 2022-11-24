@@ -6,6 +6,6 @@
         <h2 style="text-align: center;">Logged out!</h2>
     </div>
     <h3>Login again?</h3>
-    <a href="{% url 'login' %}">---> Login</a> <br>
-    <a href="{% url 'signup' %}">---> Signup</a>            
+    <p><a class="btn btn-outline-dark" href="{% url 'login' %}">Login</a>
+    <a class="btn btn-outline-dark" href="{% url 'signup' %}">Signup</a></p>
 {% endblock content %}

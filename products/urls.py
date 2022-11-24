@@ -11,5 +11,6 @@ urlpatterns = [
     path('gadgets/', gadgets, name='gadgets'),
     path('add_collections/', add_collections, name='add_collections'),
     path('remove_collections/<id>', remove_collections, name='remove_collections'),
-    path('clear_collections/', clear_collections, name='clear_collections')
+    path('clear_collections/', clear_collections, name='clear_collections'),
+    path('products/', products_list, name='products_list')
 ]
