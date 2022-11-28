@@ -32,12 +32,16 @@
                                         <li>
                                             <hr class="dropdown-divider">
                                         </li>
-                                        <li><a class="dropdown-item btn btn-outline-dark" href="/accounts/logout">Logout</a></li>
+                                        <li>
+                                            <a class="dropdown-item btn btn-outline-dark" href="/accounts/logout">Logout</a>
+                                            <a class="dropdown-item btn btn-outline-dark" href="/accounts/signup/">Signup</a>
+                                        </li>
                                     </ul>
                                 </li>
                             {% else %}
                                 <li class="nav-item">
                                     <a class="nav-link btn btn-outline-dark" aria-current="page" href="accounts/login/">Sign in</a>
+                                    <a class="nav-link btn btn-outline-dark" href="/accounts/signup/">Create new account? </a>
                                 </li>
                             {% endif %}
                         </ul>

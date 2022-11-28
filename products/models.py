@@ -14,7 +14,7 @@ class Products(models.Model):
     description = models.CharField(max_length=500, default='description of product')
     price = models.CharField(max_length=10, default=100)
     image = models.ImageField(upload_to='home_images', null=True)
-    product_category = models.CharField(max_length=20,choices=category, null=True)
+    product_category = models.CharField(max_length=20,choices=category, default='random')
 
     class Meta():
         verbose_name = "Product" 

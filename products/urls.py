@@ -11,5 +11,7 @@ urlpatterns = [
     path('add_collections/', add_collections, name='add_collections'),
     path('remove_collections/<id>', remove_collections, name='remove_collections'),
     path('clear_collections/', clear_collections, name='clear_collections'),
-    path('products/', products_list, name='products_list')
+    path('products/', products, name='products'),
+    path('products/<category>', products_category, name='products_category'),
+    #path('products_create', products_creation, name='products_creation'),
 ]

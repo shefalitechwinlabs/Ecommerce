@@ -6,9 +6,9 @@ from accounts.models import ExtendUser
 class ProductSerializer(serializers.ModelSerializer):
     class Meta():
         model = Products
-        fields = "__all__"
+        fields = ['title','description', 'price', 'image', 'product_category']
 
 class ExtendUserSerializer(serializers.ModelSerializer):
     class Meta():
         model = ExtendUser
-        fields = ['username', 'email', 'password', 'confirm_password']
+        fields = "__all__"

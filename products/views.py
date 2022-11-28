@@ -1,29 +1,38 @@
 from django.shortcuts import render, redirect
 from django.http import JsonResponse
 import json
+import requests
 from accounts.models import ExtendUser, Profile
 from .models import *
 from django.shortcuts import get_object_or_404,render
 from django.contrib import messages
 from .serializers import ProductSerializer
-# from rest_framework.decorators import api_view
-# # from rest_framework.response import Response
-# # from rest_framework import status
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from rest_framework import status
 
+
+# third party api code
+url = "https://bloomberg-market-and-financial-news.p.rapidapi.com/market/auto-complete"
+
+querystring = {"query":"<REQUIRED>"}
+
+headers = {
+    "X-RapidAPI-Key": "8eed531a55msh7f803c88a14e1a0p13c019jsnc3cf0ec8acb9",
+    "X-RapidAPI-Host": "bloomberg-market-and-financial-news.p.rapidapi.com"
+}
+
+response = requests.request("GET", url, headers=headers, params=querystring)
 
 def home(request):
+    # to show profile in navbar or else sign in
+    print(response.text)
     if 'username' in request.session:
         user = request.user
         profile = Profile.objects.get(created_by=user)
         return render(request, 'main/home.html', {'profile':profile}) 
     else:
         return render(request, 'main/home.html')
-
-def products_list(request):
-    if request.method == 'GET':
-        products = Products.objects.all()
-        serializer = ProductSerializer(products, many=True)
-        return JsonResponse({'products': serializer.data})
 
 def electronics(request):
     electronics_obj = Products.objects.filter(product_category='Electronics')
@@ -39,7 +48,7 @@ def electronics(request):
         context = {
             'products': electronics_obj,
         }
-        return JsonResponse(json.dumps(context), safe=False)
+        return render(request, 'main/products/electronics.html', context)
 
 def gadgets(request):
     gadgets_obj = Products.objects.filter(product_category='Gadgets')
@@ -131,16 +140,24 @@ def clear_collections(request):
     else:
         return redirect('/accounts/login')
 
-# def collections(request):
-#     if 'username' in request.session:
-#         user = request.user
-#         product = Collections.objects.filter(user=user)
-#         context = {
-#             'collections': product,
-#         }
-#         return render(request, 'accounts/profile/profile.html', context)
-#     else:
-#         return redirect('/accounts/login')
+# api view functions
+@api_view(['GET', 'POST'])
+def products(request):
+    if request.method == 'GET':
+        products = Products.objects.all()
+        serializer = ProductSerializer(products, many=True)
+        return JsonResponse({'products': serializer.data})
 
+    if request.method == 'POST':
+        serializer = ProductSerializer(data=request.data)
+        print(serializer)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        else:
+             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-
+def products_category(request, category):
+    products = Products.objects.filter(product_category=category)
+    serializer = ProductSerializer(products, many=True)
+    return JsonResponse({'products': serializer.data})

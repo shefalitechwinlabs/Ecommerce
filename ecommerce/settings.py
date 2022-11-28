@@ -32,8 +32,6 @@ AUTH_USER_MODEL = 'accounts.ExtendUser'
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
-# Application definition
-
 INSTALLED_APPS = [
     #'crispy_forms',
     'django.contrib.admin',
