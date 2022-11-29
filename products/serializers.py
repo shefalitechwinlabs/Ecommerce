@@ -11,4 +11,4 @@ class ProductSerializer(serializers.ModelSerializer):
 class ExtendUserSerializer(serializers.ModelSerializer):
     class Meta():
         model = ExtendUser
-        fields = "__all__"
+        fields = ['username', 'email', 'password']

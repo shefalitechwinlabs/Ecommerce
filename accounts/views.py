@@ -288,10 +288,22 @@ def password_reset_request(request):
 @api_view(['POST'])
 def user_creation(request):
     if request.method == 'POST':
-        serializer = ExtendUserSerializer(data=request)
-        print(serializer)
+        serializer = ExtendUserSerializer(data=request.data)
+        # recaptcha code
+        clientkey = request.headers["clientkey"]
+        secretkey = "6Lf-VzwjAAAAABrwgOlzI27CvyLQG9mW3SEqwuQW"
+        captcha_data = {"response": clientkey, "secret": secretkey}
+        r = requests.post(
+            url="https://www.google.com/recaptcha/api/siteverify", data=captcha_data
+        )
+        response = json.loads(r.text)
+        response["success"] = request.headers["verify"]
+        verify = response["success"]
         if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            if verify:
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            else:
+                return Response('recaptcha not verified')
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

@@ -7,6 +7,7 @@ from .models import *
 from django.shortcuts import get_object_or_404,render
 from django.contrib import messages
 from .serializers import ProductSerializer
+from django.core import serializers
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
@@ -144,9 +145,8 @@ def clear_collections(request):
 @api_view(['GET', 'POST'])
 def products(request):
     if request.method == 'GET':
-        products = Products.objects.all()
-        serializer = ProductSerializer(products, many=True)
-        return JsonResponse({'products': serializer.data})
+        data = serializers.serialize("json", Products.objects.all())
+        return JsonResponse(json.loads(data), safe=False)
 
     if request.method == 'POST':
         serializer = ProductSerializer(data=request.data)

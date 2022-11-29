@@ -30,6 +30,8 @@ ALLOWED_HOSTS = ['127.0.0.1']
 
 AUTH_USER_MODEL = 'accounts.ExtendUser'
 
+USER_DETAILS_SERIALIZER = 'ExtendUserSerializer' 
+
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 INSTALLED_APPS = [
@@ -45,6 +47,7 @@ INSTALLED_APPS = [
     'accounts.apps.AccountsConfig',
     'products.apps.ProductsConfig',
     'rest_framework',
+    'captcha',
 ]
 
 MIDDLEWARE = [
@@ -57,6 +60,9 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.contrib.flatpages.middleware.FlatpageFallbackMiddleware',
 ]
+
+RECAPTCHA_PUBLIC_KEY = 'MyRecaptchaKey123'
+RECAPTCHA_PRIVATE_KEY = 'MyRecaptchaPrivateKey456'
 
 SITE_ID = 1
 
