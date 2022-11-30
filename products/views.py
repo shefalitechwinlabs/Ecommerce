@@ -141,6 +141,9 @@ def clear_collections(request):
     else:
         return redirect('/accounts/login')
 
+def calculator(request):
+    return render(request, 'main/calculator.html')
+
 # api view functions
 @api_view(['GET', 'POST'])
 def products(request):
