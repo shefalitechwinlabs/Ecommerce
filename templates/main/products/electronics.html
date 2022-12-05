@@ -22,9 +22,19 @@
                             <div class="col-6">
                                 <p class="card-text"><strong>Rs. {{item.price}}</strong></p>
                             </div>
-                            <div class="col-6">
+                            <div class="col-6" id="product">
                                 <a type="button" href="/add_collections?id={{item.id}}&page=electronics" class="btn btn-outline-dark">Add to my collection</a>
                             </div>
+                            <script>
+                                function loadDoc() {
+                                const xhttp = new XMLHttpRequest();
+                                xhttp.onload = function() {
+                                    document.getElementById("product").innerHTML = this.responseText;
+                                    }
+                                xhttp.open("GET","add_collections?id={{item.id}}&page=electronics");
+                                xhttp.send();
+                                }
+                            </script>
                         </div>
                     </div>
                 </div>
