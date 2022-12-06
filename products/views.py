@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 import json
 import requests
 from accounts.models import ExtendUser, Profile
@@ -103,19 +103,15 @@ def add_collections(request):
     if 'username' in request.session:
         id = request.GET.get('id')
         page = request.GET.get('page')
-        print(id, page)
-        try:
+        try: # if product already exist
             Collections.objects.get(product_id=id)
-            messages.warning(request, 'product exists')
-            return redirect(page)
-        except:
-            #obj = get_object_or_404(Collections, id = id)
+            return JsonResponse({'type':'Danger','message':'product exists'})
+        except: # if product not exist
             user = request.user
             product = Products.objects.get(id=id)
             collection = Collections(product=product, added_by=user)
             collection.save()
-            messages.success(request, 'products added successfully')
-            return redirect(page)
+            return JsonResponse({'type':'Success','message':'product added to my collections'})
     else:
         return redirect('/accounts/login')
 
@@ -125,19 +121,20 @@ def remove_collections(request, id):
         if obj:
             # delete collections
             obj.delete()
-            messages.success(request, 'product removed sucessfully')
-            return redirect('/profile')
+            return JsonResponse({'type':'Success','message':'Product removed!'})
         else:
-            messages.error(request, 'product not removed successfully')
-            return redirect('/profile')
+            return JsonResponse({'type':'Warning','message':'Product not removed!'})
     else:
         return redirect('/accounts/login')
 
 def clear_collections(request):
     if 'username' in request.session:
-        Collections.objects.all().delete()
-        messages.success(request, 'collections cleared')
-        return redirect('/profile')
+        obj = Collections.objects.all()
+        if obj:
+            Collections.objects.all().delete()
+            return JsonResponse({'type':'Success','message':'Collections cleared!'})
+        else:
+            return JsonResponse({'type':'Warning','message':'No collections to clear!'})
     else:
         return redirect('/accounts/login')
 

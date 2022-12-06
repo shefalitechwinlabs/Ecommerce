@@ -25,16 +25,12 @@
         </div>
     </div>
     <!-- messages -->
-    {% if messages %}
-        {% for message in messages %}
-            <div class="messages {{message.tags}} alert alert-{{message.tags}}">
-                {{ message }}
-            </div>
-        {% endfor %}
-    {% endif %}
+    <div id="messages" class="">
+        {{ message }}
+    </div>
 </div>
 <hr>
-<!-- address code -->
+<!-- address collections button's code -->
 <p>
     <a class="btn btn-outline-dark mb-2" data-bs-toggle="collapse" href="#address" role="button" aria-expanded="false" aria-controls="collapseExample">
         Address
@@ -66,9 +62,9 @@
 <!-- my collections' cards-->
 <div class="collapse" id="collections">
     {% if collections %}
-        <div class="row">
+        <div id="my_collections" class="row">
             {% for item in collections %}
-                <div class="col-6">
+                <div class="col-6" id="{{item.id}}" >
                     <div class="card">
                         <img src="/media/{{item.product.image}}" class="card-img-top" alt="...">
                         <div class="card-body">
@@ -80,7 +76,7 @@
                                     <p class="card-text"><strong>Rs. {{item.product.price}}</strong></p>
                                 </div>
                                 <div class="col-5">
-                                    <a type="button" href="/remove_collections/{{item.id}}" class="btn btn-outline-dark">Remove from collection</a>
+                                    <a type="button" href="#top" onclick="remove_collections('{{item.id}}')" class="btn btn-outline-dark">Remove from collection</a>
                                 </div>
                             </div>
                         </div>
@@ -92,7 +88,7 @@
     <a type="button" class="btn btn-outline-dark mt-2" href="/">
         Add Collections +
     </a>
-    <a type="button" class="btn btn-outline-dark mt-2" href="/clear_collections">
+    <a type="button" class="btn btn-outline-dark mt-2" onclick="clear_collections()" href="#top">
         Clear Collections
     </a>
 </div>
@@ -125,5 +121,30 @@
         </div>
     </div>
 </div>
-
+<script>
+    function remove_collections(id){
+        const xhttp = new XMLHttpRequest();
+            xhttp.onload = function() {
+                var response = JSON.parse(xhttp.responseText)
+                $("#messages").html(response.message);
+                $("#messages").class("messages "+response.type +" alert alert-"+response.type);
+                document.getElementById(id).remove();
+            }
+            var url = "/remove_collections/"+id
+            xhttp.open("GET",url);
+            xhttp.send();
+    }
+    function clear_collections() {
+            const xhttp = new XMLHttpRequest();
+            xhttp.onload = function() {
+                var response = JSON.parse(xhttp.responseText)
+                $("#messages").html(response.message);
+                $("#messages").class("messages "+response.type +" alert alert-"+response.type);
+                $("#my_collections").remove();
+            }
+            var url = "/clear_collections"
+            xhttp.open("GET",url);
+            xhttp.send();
+        }
+</script>
 {% endblock %}

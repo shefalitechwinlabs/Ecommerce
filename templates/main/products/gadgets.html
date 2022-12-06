@@ -2,13 +2,9 @@
 
 {% block content %}
     <!-- messages -->
-    {% if messages %}
-        {% for message in messages %}
-            <div class="messages {{message.tags}} alert alert-{{message.tags}}">
-                {{ message }}
-            </div>
-        {% endfor %}
-    {% endif %}
+    <div id="product" class="">
+        {{ message }}
+    </div>
     <div class="row row-cols-1 row-cols-md-3 g-4">
         {% for item in products %}
             <div class="col">
@@ -23,12 +19,25 @@
                                 <p class="card-text"><strong>Rs. {{item.price}}</strong></p>
                             </div>
                             <div class="col-6">
-                                <a type="button" href="/add_collections?id={{item.id}}&page=gadgets" class="btn btn-outline-dark">Add to my collection</a>
+                                <a class="btn btn-outline-dark" href="#top" type="button" onclick="loadDoc('{{item.id}}')">Add to my collection</a>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         {% endfor %}
+        <script>
+            function loadDoc(id) {
+                const xhttp = new XMLHttpRequest();
+                xhttp.onload = function() {
+                    var response = JSON.parse(xhttp.responseText)
+                    document.getElementById("product").innerHTML = response.message;
+                    document.getElementById("product").className = "messages "+response.type +" alert alert-"+response.type;
+                }
+                var url = "/add_collections?id="+id+"&page=electronics"
+                xhttp.open("GET",url);
+                xhttp.send();
+            }
+        </script>
     </div>
 {% endblock %}
