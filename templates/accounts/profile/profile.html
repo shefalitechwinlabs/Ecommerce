@@ -24,10 +24,6 @@
             </ul>
         </div>
     </div>
-    <!-- messages -->
-    <div id="messages" class="">
-        {{ message }}
-    </div>
 </div>
 <hr>
 <!-- address collections button's code -->
@@ -39,6 +35,10 @@
         My collections
     </a>
 </p>
+ <!-- messages -->
+ <div id="messages" class="">
+    {{ message }}
+</div>
 <!-- address cards -->
 <div class="collapse" id="address">
     {% if address %}
@@ -64,7 +64,7 @@
     {% if collections %}
         <div id="my_collections" class="row">
             {% for item in collections %}
-                <div class="col-6" id="{{item.id}}" >
+                <div class="col-6" id="{{item.id}}" name="collection_card" >
                     <div class="card">
                         <img src="/media/{{item.product.image}}" class="card-img-top" alt="...">
                         <div class="card-body">
@@ -76,7 +76,7 @@
                                     <p class="card-text"><strong>Rs. {{item.product.price}}</strong></p>
                                 </div>
                                 <div class="col-5">
-                                    <a type="button" href="#top" onclick="remove_collections('{{item.id}}')" class="btn btn-outline-dark">Remove from collection</a>
+                                    <a type="button" name="collection_card" id ="{{item.id}}" class="btn btn-outline-dark">Remove from collection</a>
                                 </div>
                             </div>
                         </div>
@@ -88,7 +88,7 @@
     <a type="button" class="btn btn-outline-dark mt-2" href="/">
         Add Collections +
     </a>
-    <a type="button" class="btn btn-outline-dark mt-2" onclick="clear_collections()" href="#top">
+    <a type="button" class="btn btn-outline-dark mt-2" id="clear_collections">
         Clear Collections
     </a>
 </div>
@@ -122,29 +122,25 @@
     </div>
 </div>
 <script>
-    function remove_collections(id){
-        const xhttp = new XMLHttpRequest();
-            xhttp.onload = function() {
-                var response = JSON.parse(xhttp.responseText)
-                $("#messages").html(response.message);
-                $("#messages").class("messages "+response.type +" alert alert-"+response.type);
-                document.getElementById(id).remove();
-            }
-            var url = "/remove_collections/"+id
-            xhttp.open("GET",url);
-            xhttp.send();
-    }
-    function clear_collections() {
-            const xhttp = new XMLHttpRequest();
-            xhttp.onload = function() {
-                var response = JSON.parse(xhttp.responseText)
-                $("#messages").html(response.message);
-                $("#messages").class("messages "+response.type +" alert alert-"+response.type);
+     $("a[name='collection_card']").click(function(){
+        id = $(this).attr("id");
+        const remove_url = '/remove_collections/'+id
+        $.get(remove_url, function(responseTxt){
+                $("#messages").html(responseTxt.message);
+                $("#messages").attr("class","messages "+responseTxt.type +" alert alert-"+responseTxt.type);
+                $('#'+id).animate({opacity: '0'},"slow", function(){
+                    $('#'+id).remove();
+                })
+                
+            })
+    });
+    $("a[id='clear_collections']").click(function(){
+            const clear_url = '/clear_collections'
+            $.get(clear_url, function(responseTxt){
+                $("#messages").html(responseTxt.message);
+                $("#messages").attr('class',"messages "+responseTxt.type +" alert alert-"+responseTxt.type);
                 $("#my_collections").remove();
-            }
-            var url = "/clear_collections"
-            xhttp.open("GET",url);
-            xhttp.send();
-        }
+            })
+        });
 </script>
 {% endblock %}
