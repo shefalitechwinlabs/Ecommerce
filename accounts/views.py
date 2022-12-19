@@ -104,7 +104,6 @@ def edit_address(request, id):
             return render(request, "accounts/profile/edit_address.html", context)
     return redirect("/")
 
-
 def address_details(request):
     if "username" in request.session:
         query_address = address_obj = Address.objects.filter(created_by=request.user)
@@ -214,9 +213,12 @@ def email_verification_complete(request, uidb64, token):
 
 
 def login(request):
+    print('login')
     if "username" in request.session:
+        print('if')
         return redirect("/")
     elif request.method == "POST":
+        print('elif')
         username = request.POST["username"]
         password = request.POST["password"]
         user = auth.authenticate(username=username, password=password)
@@ -233,6 +235,7 @@ def login(request):
             messages.warning(request, "Username or password is incorrect!")
             return render(request, "accounts/login.html")
     else:
+        print('else')
         return render(request, "accounts/login.html")
 
 

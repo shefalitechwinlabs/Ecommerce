@@ -1,6 +1,7 @@
 {% extends 'accounts/base.html' %}
 
 {% block content %}
+{% load socialaccount %}
 <h3 style="text-align:center;">Login</h3>
 <div class="container">
     <div class="card-body" style="width: 25em; margin-left: auto; margin-right: auto;">
@@ -18,6 +19,7 @@
             <input type="password" class="form-control" name="password" placeholder="password"><br>
             <div class="d-grid gap-2">
                 <button type="submit" class="d-grid gap-2 btn btn-outline-dark">Login</button>
+                <a type="submit" class="d-grid gap-2 btn btn-outline-dark" href="{% provider_login_url 'google' %}?next=/">Login with Google</a>
                 {% if user_created %}
                     <a type="submit" class="text-dark" href="{% url 'email_verification_done' %}">Resend email verification</a>
                 {% endif %}

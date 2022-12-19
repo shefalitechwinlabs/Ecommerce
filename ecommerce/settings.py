@@ -8,6 +8,9 @@ https://docs.djangoproject.com/en/4.1/topics/settings/
 
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
+
+changes regarding setting.py
+
 """
 
 from pathlib import Path
@@ -48,7 +51,23 @@ INSTALLED_APPS = [
     'products.apps.ProductsConfig',
     'rest_framework',
     'captcha',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.google'
 ]
+
+SOCIALACCOUNT_LOGIN_ON_GET = True
+
+SOCIALACCOUNT_PROVIDERS = {
+    'google': {
+        'scope': [
+            'profile',
+            'email'
+        ],
+        'AUTH_PARAMS': {'access_type': 'online'}
+    }
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -92,12 +111,10 @@ WSGI_APPLICATION = 'ecommerce.wsgi.application'
 
 DATABASES = {
    'default': {
-       'ENGINE': 'django.db.backends.postgresql',
-       'NAME': 'ecommerce',
-       'USER': 'admin',
-       'PASSWORD': 'admin',
-       'HOST': 'localhost',
-       'PORT': '',
+        'ENGINE': 'djongo',
+        'NAME': 'ecommerce',
+        'ENFORCE_SCHEMA': False,
+        'TIME_ZONE': 'US/Pacific',
    }
 }
 
@@ -155,3 +172,11 @@ EMAIL_HOST_PASSWORD = ''
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
+
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend'
+)
+
+LOGIN_REDIRECT_URL = 'accounts/'
+LOGOUT_REDIRECT_URL = 'accounts/'

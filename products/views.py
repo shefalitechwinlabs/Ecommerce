@@ -100,6 +100,7 @@ def fashion(request):
         return render(request, 'main/products/fashion.html', context)
 
 def add_collections(request):
+    print('add_collections')
     if 'username' in request.session:
         id = request.GET.get('id')
         page = request.GET.get('page')
@@ -140,6 +141,9 @@ def clear_collections(request):
 
 def calculator(request):
     return render(request, 'main/calculator.html')
+
+def random(request):
+    return render(request, 'main/random.html')
 
 # api view functions
 @api_view(['GET', 'POST'])
