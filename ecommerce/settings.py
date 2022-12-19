@@ -113,8 +113,8 @@ DATABASES = {
    'default': {
         'ENGINE': 'djongo',
         'NAME': 'ecommerce',
-        'ENFORCE_SCHEMA': False,
-        'TIME_ZONE': 'US/Pacific',
+        # 'ENFORCE_SCHEMA': False,
+        # 'TIME_ZONE': 'US/Pacific',
    }
 }
 

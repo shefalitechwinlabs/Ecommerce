@@ -143,7 +143,20 @@ def calculator(request):
     return render(request, 'main/calculator.html')
 
 def random(request):
-    return render(request, 'main/random.html')
+    return render(request, 'random/random.html')
+
+def table(request):
+    electronics_obj = Products.objects.filter(product_category='Electronics')
+    gadgets_obj = Products.objects.filter(product_category='Gadgets')
+    home_obj = Products.objects.filter(product_category='Home')
+    fashion_obj = Products.objects.filter(product_category='Fashion')
+    context = {
+        'electronics': electronics_obj,
+        'gadgets': gadgets_obj,
+        'home': home_obj,
+        'fashion': fashion_obj
+    }
+    return render(request, 'random/table.html', context)
 
 # api view functions
 @api_view(['GET', 'POST'])

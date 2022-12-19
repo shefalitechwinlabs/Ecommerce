@@ -1,0 +1,34 @@
+{% extends 'main/base.html' %}
+
+{% block content %}
+
+<div class="effect_test">
+    <div id=1>welcome</div>
+    <div id=2>to</div>
+    <div id=3>shopmania.</div>
+    <div id=4>Here</div>
+    <div id=5>is</div>
+    <div id=6>the</div>
+    <div id=7>effect</div>
+    <div id=8>of</div>
+    <div id=9>jquery</div>
+    <div id=10>font</div>
+</div>
+<button>Start Animation</button>
+
+<script>
+
+    $("button").click(function () {
+        var element;
+        var elements = $(".effect_test").children();
+        elements.each(function () {
+            element = $(this);
+            element.css({ "background-color": "yellow" });
+            setTimeout(function () {
+                elements.removeAttr('style');
+            }, 2000);
+        })
+    });
+</script>
+
+{% endblock %}

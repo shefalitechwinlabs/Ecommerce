@@ -1,0 +1,63 @@
+{% extends 'main/base.html' %}
+
+{% block content %}
+<table id="myTable" class="display">
+    <thead>
+        <tr>
+            <th>Title</th>
+            <th>Description</th>
+            <th>Price</th>
+            <th>Category</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for product in electronics %}
+            <tr>
+                <td>{{product.title}}</td>
+                <td>{{product.description}}</td>
+                <td>{{product.price}}</td>
+                <td>Electronics</td>
+            </tr>
+        {% endfor %}
+        {% for product in gadgets %}
+            <tr>
+                <td>{{product.title}}</td>
+                <td>{{product.description}}</td>
+                <td>{{product.price}}</td>
+                <td>Gadgets</td>
+            </tr>
+        {% endfor %}
+        {% for product in fashion %}
+            <tr>
+                <td>{{product.title}}</td>
+                <td>{{product.description}}</td>
+                <td>{{product.price}}</td>
+                <td>Fashion</td>
+            </tr>
+        {% endfor %}
+        {% for product in home %}
+            <tr>
+                <td>{{product.title}}</td>
+                <td>{{product.description}}</td>
+                <td>{{product.price}}</td>
+                <td>Home</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<script>
+    $(document).ready( function () {
+    $('#myTable').DataTable();
+   
+    });
+
+    var table = $('#example').DataTable( {
+        buttons: [
+            'copy', 'excel', 'pdf'
+        ]
+    } );
+    table.buttons().container()
+    .appendTo( $('.col-sm-6:eq(0)', table.table().container() ) );
+</script>
+
+{% endblock %}

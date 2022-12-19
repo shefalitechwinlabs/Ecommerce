@@ -16,7 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from accounts.views import *
-from products.views import calculator, random 
+from products.views import calculator, random, table
 from django.conf.urls.static import static
 from django.conf import settings
 
@@ -31,6 +31,7 @@ urlpatterns = [
     path('edit_address/<id>', edit_address, name='edit_address'),
     path('calculator/', calculator, name='calculator'),
     path('random/', random, name='random'),
+    path('table/', table, name='table'),
     path('admin/', admin.site.urls),
     
 ]
