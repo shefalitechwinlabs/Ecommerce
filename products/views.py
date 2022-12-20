@@ -143,7 +143,11 @@ def calculator(request):
     return render(request, 'main/calculator.html')
 
 def random(request):
-    return render(request, 'random/random.html')
+    products = Products.objects.all()
+    context = {
+        'products': products
+    }
+    return render(request, 'random/random.html', context)
 
 def table(request):
     electronics_obj = Products.objects.filter(product_category='Electronics')

@@ -2,7 +2,7 @@
 
 {% block content %}
 
-<div class="effect_test">
+<!-- <div class="effect_test">
     <div id=1>welcome</div>
     <div id=2>to</div>
     <div id=3>shopmania.</div>
@@ -13,10 +13,25 @@
     <div id=8>of</div>
     <div id=9>jquery</div>
     <div id=10>font</div>
-</div>
-<button>Start Animation</button>
-
+</div> -->
+<form method="POST"></form>
+    <select id="mySelect2" name="cars" class=".js-example-basic-multiple-limit" multiple>
+        {% for product in products %}
+            <option value="{{product.id}}">{{product.title}},{{product.product_category}}</option>
+        {% endfor %}
+    </select>
+    <br><br>
+    <input type="submit" id="button" value="Submit">
 <script>
+    $(document).ready(function () {
+        $('#mySelect2').select2({});
+        $('#button').click(function(){
+            console.log($('option').attr(value));  
+        })
+        });
+</script>
+
+<!-- <script>
 
     $("button").click(function () {
         var element;
@@ -29,6 +44,6 @@
             }, 2000);
         })
     });
-</script>
+</script> -->
 
 {% endblock %}
