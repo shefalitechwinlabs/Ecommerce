@@ -1,95 +1,44 @@
 <html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Shop-Mania</title>
+        <!-- jQuery library -->
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+        <!-- JS & CSS library of MultiSelect plugin -->
+        <link href="/jquery/css/jquery.multiselect.css">
+        <!-- select2 css -->
+        <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+        <!-- JS & CSS library of MultiSelect plugin -->
+        <script type="text/javascript" src="/jquery/js/jquery.multiselect.js"></script>
+        <!-- select2 js -->
+        <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+       
+        
 
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Shop-Mania</title>
-    <!-- Bootstrap -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Datatable -->
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.1/css/jquery.dataTables.css">
-    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.3.2/css/buttons.dataTables.min.css">
-    <!-- JQuery -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
-    <!-- Bootstrap js-->
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.min.js"></script>
-    <!-- Datatable JS -->
-    <script src="https://cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js"></script>
-    <!-- <script src="https://cdn.datatables.net/buttons/2.3.2/js/dataTables.buttons.min.js"></script> -->
-    <script src="https://cdn.datatables.net/buttons/1.5.6/js/dataTables.buttons.min.js"></script>
-
-    <!-- <script type="text/javascript" src="https://code.jquery.com/jquery-3.5.1.js"></script> -->
-</head>
-
-<body>
-    <div class="container">
-        <table id="myTable" class="display">
-            <thead>
-                <tr>
-                    <th>Title</th>
-                    <th>Description</th>
-                    <th>Price</th>
-                    <th>Category</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for product in electronics %}
-                <tr>
-                    <td>{{product.title}}</td>
-                    <td>{{product.description}}</td>
-                    <td>{{product.price}}</td>
-                    <td>Electronics</td>
-                </tr>
-                {% endfor %}
-                {% for product in gadgets %}
-                <tr>
-                    <td>{{product.title}}</td>
-                    <td>{{product.description}}</td>
-                    <td>{{product.price}}</td>
-                    <td>Gadgets</td>
-                </tr>
-                {% endfor %}
-                {% for product in fashion %}
-                <tr>
-                    <td>{{product.title}}</td>
-                    <td>{{product.description}}</td>
-                    <td>{{product.price}}</td>
-                    <td>Fashion</td>
-                </tr>
-                {% endfor %}
-                {% for product in home %}
-                <tr>
-                    <td>{{product.title}}</td>
-                    <td>{{product.description}}</td>
-                    <td>{{product.price}}</td>
-                    <td>Home</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+    </head>
+    <body>
+        <select id="mySelect2" class=".js-example-basic-multiple-limit" multiple>
+            <option value="1">volvo</option>
+            <option value="2">car</option>
+            <option value="3">truck</option>
+            <option value="4">bus</option>
+            <option value="5">train</option>
+            <option value="selectall">Select All</option>
+        </select>
+        <button id="button">submit</button>
         <script>
-            $(document).ready(function () {
-                $('#myTable').DataTable({
-                    dom: '<Bfrtip>',
-                    // buttons: [
-                    //     {
-                    //         extend: 'copy',
-                    //         text: 'Copy current page',
-                    //         className: 'btn btn-primary'
-                    //     }
-                    // ]
-                    "initComplete": function () {
-                        $("#reminders").show();
-                    },
-                    "buttons": ['copyHtml5', 'csv', 'excel', 'pdf', 'print', 'colvisHtml5']
-                });
-                table.buttons().container().appendTo('#reminders_wrapper .col-md-6:eq(0)');
-                    // table.buttons().container()
-                    // .appendTo( $('.col-sm-6:eq(0)', table.table().container() ) )
+            $(document).ready(function() {
+                $('#mySelect2').multiselect();
+            });
+            $('#button').click(function(){
+                //var output = $('option').attr('value');
+                var output = $('#mySelect2').val();
+                if (output[0] == 'selectall'){
+                    var elements = $('#myselect2').find('option');
+                } 
+                console.log('output', output[0])
             });
         </script>
-    </div>
-</body>
-
+    </body>
 </html>

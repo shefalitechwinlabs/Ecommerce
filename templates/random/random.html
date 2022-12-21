@@ -1,49 +1,27 @@
 {% extends 'main/base.html' %}
 
 {% block content %}
-
-<!-- <div class="effect_test">
-    <div id=1>welcome</div>
-    <div id=2>to</div>
-    <div id=3>shopmania.</div>
-    <div id=4>Here</div>
-    <div id=5>is</div>
-    <div id=6>the</div>
-    <div id=7>effect</div>
-    <div id=8>of</div>
-    <div id=9>jquery</div>
-    <div id=10>font</div>
-</div> -->
-<form method="POST"></form>
-    <select id="mySelect2" name="cars" class=".js-example-basic-multiple-limit" multiple>
+    <select id="mySelect2" class=".js-example-basic-multiple-limit" multiple>
+        <option value="selectall">Select All</option>
         {% for product in products %}
-            <option value="{{product.id}}">{{product.title}},{{product.product_category}}</option>
+        <option id="{{product.id}}" value="{{product.id}}">{{product.title}},{{product.product_category}}</option>
         {% endfor %}
     </select>
-    <br><br>
-    <input type="submit" id="button" value="Submit">
-<script>
-    $(document).ready(function () {
-        $('#mySelect2').select2({});
-        $('#button').click(function(){
-            console.log($('option').attr(value));  
-        })
+    <button id="button">submit</button>
+    <script>
+        $(document).ready(function() {
+            $('#mySelect2').select2();
         });
-</script>
-
-<!-- <script>
-
-    $("button").click(function () {
-        var element;
-        var elements = $(".effect_test").children();
-        elements.each(function () {
-            element = $(this);
-            element.css({ "background-color": "yellow" });
-            setTimeout(function () {
-                elements.removeAttr('style');
-            }, 2000);
-        })
-    });
-</script> -->
-
+        $('#button').click(function(){
+            var output = $('#mySelect2').val();
+            if (output[0] == 'selectall'){
+                var elements = $('select').find('option');
+                for (element of elements){
+                    var id_value = element.value
+                    $("#id_value").val(id_value);
+                    console.log('working')
+                }
+            }
+        });
+    </script>
 {% endblock %}

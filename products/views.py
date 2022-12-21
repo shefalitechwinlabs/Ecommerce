@@ -144,6 +144,8 @@ def calculator(request):
 
 def random(request):
     products = Products.objects.all()
+    if request.method=='POST':
+        print(request.POST)
     context = {
         'products': products
     }
@@ -160,7 +162,9 @@ def table(request):
         'home': home_obj,
         'fashion': fashion_obj
     }
-    return render(request, 'random/table.html', context)
+    if request.method=='POST':
+        print(request.POST.items())
+    return render(request, 'random/table1.html', context)
 
 # api view functions
 @api_view(['GET', 'POST'])
