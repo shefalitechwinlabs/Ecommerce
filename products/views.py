@@ -11,6 +11,7 @@ from django.core import serializers
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
+from django.views.decorators.csrf import csrf_exempt
 
 
 # third party api code
@@ -142,14 +143,25 @@ def clear_collections(request):
 def calculator(request):
     return render(request, 'main/calculator.html')
 
+@csrf_exempt
 def random(request):
-    products = Products.objects.all()
-    if request.method=='POST':
-        print(request.POST)
-    context = {
-        'products': products
-    }
-    return render(request, 'random/random.html', context)
+    products_obj = Products.objects.all()
+    category = []
+    product = []
+    for i in range(len(products_obj)):
+        category.append(products_obj[i].product_category)
+        product.append(products_obj[i].title)
+    categories = set(category)
+    products = set(product)
+    if request.method == 'POST':
+        value = request.POST.getlist('value[]')
+        return JsonResponse(value, safe=False)
+    else:
+        context = {
+            'products': products,
+            'categories': categories
+        }
+        return render(request, 'random/random.html', context)
 
 def table(request):
     electronics_obj = Products.objects.filter(product_category='Electronics')
@@ -162,8 +174,6 @@ def table(request):
         'home': home_obj,
         'fashion': fashion_obj
     }
-    if request.method=='POST':
-        print(request.POST.items())
     return render(request, 'random/table1.html', context)
 
 # api view functions

@@ -1,27 +1,36 @@
 {% extends 'main/base.html' %}
 
 {% block content %}
-    <select id="mySelect2" class=".js-example-basic-multiple-limit" multiple>
-        <option value="selectall">Select All</option>
+    <select data-placeholder="Select Options" id="mySelect2" class=".js-example-basic-multiple-limit" multiple>
+        <option class="select_option" value="selectall">Select All</option>
         {% for product in products %}
-        <option id="{{product.id}}" value="{{product.id}}">{{product.title}},{{product.product_category}}</option>
+            <option class="product" value="{{product.id}}">{{product.title}},{{product.product_category}}</option>
         {% endfor %}
     </select>
-    <button id="button">submit</button>
+    <select data-placeholder="Select Options" id="category" class=".js-example-basic-multiple-limit" multiple>
+        <option class="select_option" value="selectall">Select All</option>
+        {% for category in categories %}
+            <option class="product" value="{{category}}">{{category}}</option>
+        {% endfor %}
+    </select>
     <script>
         $(document).ready(function() {
             $('#mySelect2').select2();
         });
-        $('#button').click(function(){
-            var output = $('#mySelect2').val();
-            if (output[0] == 'selectall'){
-                var elements = $('select').find('option');
-                for (element of elements){
-                    var id_value = element.value
-                    //$("#id_value").val(id_value);
-                    console.log(id_value)
+        $('#mySelect2').change(function(){
+            $.ajax({
+                type: 'POST',
+                url: '/random/',
+                data: {value:$('#mySelect2').val()},
+                success: function(value){
+                    if (value[0] == 'selectall'){
+                        var elements = $('.product');
+                        $('#mySelect2').empty();
+                        $('#mySelect2').append('<option class="product" selected value="'+ // next line
+                        elements.length +'">'+ elements.length + ' options selected</option>');
+                    }
                 }
-            }
+            })
         });
     </script>
 {% endblock %}
