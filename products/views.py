@@ -147,18 +147,26 @@ def calculator(request):
 def random(request):
     products_obj = Products.objects.all()
     category = []
-    product = []
     for i in range(len(products_obj)):
         category.append(products_obj[i].product_category)
-        product.append(products_obj[i].title)
     categories = set(category)
-    products = set(product)
     if request.method == 'POST':
-        value = request.POST.getlist('value[]')
-        return JsonResponse(value, safe=False)
+        product_catrgories = request.POST.getlist('categories[]')
+
+        product_titles = []
+        if not product_catrgories :
+            product_titles = 0
+        elif 'selectall' in product_catrgories:
+            for i in products_obj:
+                product_titles.append(i.title)
+        else:
+            for product_category in product_catrgories:
+                products = Products.objects.filter(product_category=product_category)
+                for product_title in products:
+                    product_titles.append(product_title.title)
+        return JsonResponse(product_titles, safe=False)
     else:
         context = {
-            'products': products,
             'categories': categories
         }
         return render(request, 'random/random.html', context)

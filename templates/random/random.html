@@ -1,36 +1,35 @@
 {% extends 'main/base.html' %}
 
 {% block content %}
-    <select data-placeholder="Select Options" id="mySelect2" class=".js-example-basic-multiple-limit" multiple>
-        <option class="select_option" value="selectall">Select All</option>
-        {% for product in products %}
-            <option class="product" value="{{product.id}}">{{product.title}},{{product.product_category}}</option>
-        {% endfor %}
-    </select>
-    <select data-placeholder="Select Options" id="category" class=".js-example-basic-multiple-limit" multiple>
-        <option class="select_option" value="selectall">Select All</option>
-        {% for category in categories %}
-            <option class="product" value="{{category}}">{{category}}</option>
-        {% endfor %}
-    </select>
-    <script>
-        $(document).ready(function() {
-            $('#mySelect2').select2();
-        });
-        $('#mySelect2').change(function(){
-            $.ajax({
-                type: 'POST',
-                url: '/random/',
-                data: {value:$('#mySelect2').val()},
-                success: function(value){
-                    if (value[0] == 'selectall'){
-                        var elements = $('.product');
-                        $('#mySelect2').empty();
-                        $('#mySelect2').append('<option class="product" selected value="'+ // next line
-                        elements.length +'">'+ elements.length + ' options selected</option>');
+<select data-placeholder="Select Options" id="categories" multiple>
+    <option class="select_option" value="selectall">Select All</option>
+    {% for category in categories %}
+    <option class="categories" value="{{category}}">{{category}}</option>
+    {% endfor %}
+</select>
+<select id="products"></select>
+<script id="products" multiple>
+    $(document).ready(function () {
+        $('#categories').select2();
+    });
+
+    $('#categories').change(function () {
+        $.ajax({
+            type: 'POST',
+            url: '/random/',
+            data: { categories: $('#categories').val() },
+            success: function (product_titles) {
+                if (product_titles == 0) {
+                    $('#products').empty();
+                }
+                else {
+                    $('#products').empty();
+                    for (let i = 0; i < product_titles.length; i++) {
+                        $('#products').append('<option>' + product_titles[i] + '</option>');
                     }
                 }
-            })
-        });
-    </script>
+            }
+        })
+    });
+</script>
 {% endblock %}
