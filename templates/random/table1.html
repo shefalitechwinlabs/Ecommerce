@@ -1,44 +1,85 @@
-<html>
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>Shop-Mania</title>
-        <!-- jQuery library -->
-        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-        <!-- JS & CSS library of MultiSelect plugin -->
-        <link href="/jquery/css/jquery.multiselect.css">
-        <!-- select2 css -->
-        <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-        <!-- JS & CSS library of MultiSelect plugin -->
-        <script type="text/javascript" src="/jquery/js/jquery.multiselect.js"></script>
-        <!-- select2 js -->
-        <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-       
-        
+{% extends 'main/base.html' %}
 
-    </head>
-    <body>
-        <select id="mySelect2" class=".js-example-basic-multiple-limit" multiple>
-            <option value="1">volvo</option>
-            <option value="2">car</option>
-            <option value="3">truck</option>
-            <option value="4">bus</option>
-            <option value="5">train</option>
-            <option value="selectall">Select All</option>
+{% block content %}
+    <form action="/action_page.php"></form>
+        <select data-placeholder="Select Options" id="select_date">
+            <option class="today" value="select_option" selected>Select Option</option>
+            <option class="today" value="today">Today</option>
+            <option class="yesterday" value="yesterday">Yesterday</option>
+            <option class="previous_seven_days" value="previous_seven_days">Previous Seven Days</option>
+            <option class="this_week" value="this_week">This Week</option>
+            <option class="last_week" value="last_week">Last Week</option>
+            <option class="this_month" value="this_month">This Month</option>
+            <option class="today" value="last_month">Last Month</option>
         </select>
-        <button id="button">submit</button>
-        <script>
-            $(document).ready(function() {
-                $('#mySelect2').multiselect();
-            });
-            $('#button').click(function(){
-                //var output = $('option').attr('value');
-                var output = $('#mySelect2').val();
-                if (output[0] == 'selectall'){
-                    var elements = $('#myselect2').find('option');
-                } 
-                console.log('output', output[0])
-            });
-        </script>
-    </body>
-</html>
+        <input type="date" id="datemin" name="datemin" value="">
+        <input type="date" id="datemax" name="datemax" value="">     
+    </form>
+    <button id="button">submit</button>
+    <script>
+        $(document).ready(function() {
+            $('#select_date').select2();
+        });
+        $('#select_date').change(function () {
+            date_input = $('#select_date').val();
+            // get today date
+            const today = new Date();
+            // function to get date format 
+            function get_date(date){
+                var dd = String(date.getDate()).padStart(2, '0');
+                var mm = String(date.getMonth() + 1).padStart(2, '0'); //January is 0!
+                var yyyy = date.getFullYear();
+                date = yyyy+'-'+mm+'-'+dd
+                return date
+            }
+            current_date = get_date(today)
+            // change input date value as per options selected
+            if (date_input == 'today') {
+                var next_date = new Date(new Date().setDate(today.getDate() + 1));
+                $('#datemin').val(current_date);
+                $('#datemax').val(get_date(next_date));
+                }
+            else if (date_input == 'yesterday') {
+                var previous_date = new Date(new Date().setDate(today.getDate() - 1));
+                $('#datemin').val(get_date(previous_date));
+                $('#datemax').val(current_date);
+            }
+            else if (date_input == 'previous_seven_days') {
+                var prior_date = new Date(new Date().setDate(today.getDate() - 7));
+                $('#datemin').val(get_date(prior_date));
+                $('#datemax').val(current_date);
+            }
+            else if (date_input == 'this_week') {
+                var first_day = (today.getDate() - today.getDay());
+                var last_day =  first_day + 6
+                var firstDayOfcurrentWeek = new Date(today.setDate(first_day));
+                var lastDayOfcurrentWeek = new Date(today.setDate(last_day));
+                $('#datemin').val(get_date(firstDayOfcurrentWeek));
+                $('#datemax').val(get_date(lastDayOfcurrentWeek));
+            }
+            else if (date_input == 'last_week') {
+                var first_day = (today.getDate() - today.getDay());
+                var last_day =  first_day + 6
+                var firstDayOfLastWeek = new Date(today.setDate(first_day - 7));
+                var lastDayOfLastWeek = new Date(today.setDate(last_day - 7));
+                $('#datemin').val(get_date(firstDayOfLastWeek));
+                $('#datemax').val(get_date(lastDayOfLastWeek));
+            }
+            else if (date_input == 'this_month') {
+                first_date = new Date(today.getFullYear(), today.getMonth(), 1)
+                last_date = new Date(today.getFullYear(), today.getMonth()+1, 0)
+                $('#datemin').val(get_date(first_date));
+                $('#datemax').val(get_date(last_date));
+            }
+            else if (date_input == 'last_month') {
+                first_date = new Date(today.getFullYear(), today.getMonth()-1, 1)
+                last_date = new Date(today.getFullYear(), today.getMonth(), 0)
+                $('#datemin').val(get_date(first_date));
+                $('#datemax').val(get_date(last_date));
+            }
+            else{
+                console.log('not working');
+            }
+        });
+    </script>
+{% endblock %}

@@ -172,17 +172,7 @@ def random(request):
         return render(request, 'random/random.html', context)
 
 def table(request):
-    electronics_obj = Products.objects.filter(product_category='Electronics')
-    gadgets_obj = Products.objects.filter(product_category='Gadgets')
-    home_obj = Products.objects.filter(product_category='Home')
-    fashion_obj = Products.objects.filter(product_category='Fashion')
-    context = {
-        'electronics': electronics_obj,
-        'gadgets': gadgets_obj,
-        'home': home_obj,
-        'fashion': fashion_obj
-    }
-    return render(request, 'random/table1.html', context)
+    return render(request, 'random/table1.html')
 
 # api view functions
 @api_view(['GET', 'POST'])
