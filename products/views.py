@@ -171,8 +171,8 @@ def random(request):
         }
         return render(request, 'random/random.html', context)
 
-def table(request):
-    return render(request, 'random/table1.html')
+def datepicker(request):
+    return render(request, 'random/datepicker.html')
 
 # api view functions
 @api_view(['GET', 'POST'])
