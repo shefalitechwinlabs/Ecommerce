@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'django.contrib.flatpages',
     'accounts.apps.AccountsConfig',
     'products.apps.ProductsConfig',
+    'chatterbot.ext.django_chatterbot',
     'rest_framework',
     'captcha',
     'allauth',
@@ -105,6 +106,21 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'ecommerce.wsgi.application'
 
+#Chatbot
+
+CHATTERBOT = {
+    'name': 'mania',
+    'logic_adapters': [
+        'chatterbot.logic.MathematicalEvaluation',
+        'chatterbot.logic.TimeLogicAdapter',
+        'chatterbot.logic.BestMatch',
+        {
+            'import_path': 'chatterbot.logic.BestMatch',
+            'default_response': 'I am sorry, but I do not understand. I am still learning.',
+            'maximum_similarity_threshold': 0.90
+        }
+    ]
+}
 
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases

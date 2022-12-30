@@ -27,17 +27,14 @@
             </div>
         {% endfor %}
         <script>
-            function loadDoc(id) {
-                const xhttp = new XMLHttpRequest();
-                xhttp.onload = function() {
-                    var response = JSON.parse(xhttp.responseText)
-                    document.getElementById("product").innerHTML = response.message;
-                    document.getElementById("product").className = "messages "+response.type +" alert alert-"+response.type;
+            $('a').click(function(){
+            $.get("/add_collections/",{id: this.id},
+                function(data){
+                    $('#product').attr('class', "messages "+data.type +" alert alert-"+data.type)
+                    $('#product').html(data.message)
                 }
-                var url = "/add_collections?id="+id+"&page=electronics"
-                xhttp.open("GET",url);
-                xhttp.send();
-            }
+            );
+        });
         </script>
     </div>
 {% endblock %}

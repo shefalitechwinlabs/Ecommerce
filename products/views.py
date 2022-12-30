@@ -12,6 +12,11 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 from django.views.decorators.csrf import csrf_exempt
+from django.views.generic.base import TemplateView
+from django.views.generic import View
+from chatterbot import ChatBot
+from chatterbot.ext.django_chatterbot import settings
+from chatterbot.trainers import ChatterBotCorpusTrainer
 
 
 # third party api code
@@ -100,22 +105,57 @@ def fashion(request):
         }
         return render(request, 'main/products/fashion.html', context)
 
+# from chatterbot.trainers import ChatterBotCorpusTrainer
+# chatbot=ChatBot('mania',trainer='chatterbot.trainers.ChatterBotCorpusTrainer')
+
+chatbot = ChatBot('Mania')
+
+# Create a new trainer for the chatbot
+trainer = ChatterBotCorpusTrainer(chatbot)
+
+# Train based on the english corpus
+trainer.train("chatterbot.corpus.english")
+
+@csrf_exempt
+def chatbot_msg(request):
+	response = {'status': None}
+
+	if request.method == 'POST':
+		data = json.loads(request.body)
+		message = data['message']
+
+		chat_response = chatbot.get_response(message).text
+		response['message'] = {'text': chat_response, 'user': False, 'chat_bot': True}
+		response['status'] = 'ok'
+
+	else:
+		response['error'] = 'no post data found'
+
+	return HttpResponse(
+		json.dumps(response),
+			content_type="application/json"
+		)
+
+
+def chatbot_view(request):
+	context = {'title': 'Mania Chatbot Version 1.0'}
+	return render(request, 'main/chatbot/chatbot.html', context)
+
+@csrf_exempt
 def add_collections(request):
-    print('add_collections')
     if 'username' in request.session:
         id = request.GET.get('id')
-        page = request.GET.get('page')
         try: # if product already exist
             Collections.objects.get(product_id=id)
-            return JsonResponse({'type':'Danger','message':'product exists'})
+            return JsonResponse({"type":"Warning","message":"product exists"})
         except: # if product not exist
             user = request.user
             product = Products.objects.get(id=id)
             collection = Collections(product=product, added_by=user)
             collection.save()
-            return JsonResponse({'type':'Success','message':'product added to my collections'})
+            return JsonResponse({"type":"Success",'message':'product added to my collections'})
     else:
-        return redirect('/accounts/login')
+        return JsonResponse({'type':'Warning','message':'You need to login first'})
 
 def remove_collections(request, id):
     if 'username' in request.session:
@@ -172,7 +212,7 @@ def random(request):
         return render(request, 'random/random.html', context)
 
 def datepicker(request):
-    return render(request, 'random/datepicker.html')
+    return render(request, 'random/ms_to_time.html')
 
 # api view functions
 @api_view(['GET', 'POST'])

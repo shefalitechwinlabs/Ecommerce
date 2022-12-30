@@ -1,0 +1,30 @@
+{% extends 'main/base.html' %}
+
+{% block content %}
+    <div id="get_ms" style="background: #fff; cursor: pointer; padding: 5px 10px; border: 1px solid #ccc; width: 100%">
+        <h5>Milliseconds</h5>
+        <input type="number" id="milliseconds" val="">
+    </div>
+    <div id="get_time" style="background: #fff; cursor: pointer; padding: 5px 10px; border: 1px solid #ccc; width: 100%">
+        <h5>Time</h5>
+        <input type="text" id="time" val="">
+    </div>
+    <script type="text/javascript">
+        $('#get_ms').on('input propertychange',function() {
+            var ms = $('#milliseconds').val();
+            var seconds = Math.floor((ms / 1000) % 60) + 's'
+            var minutes = Math.floor((ms / (1000 * 60) % 60)) + 'm '
+            var hours = Math.floor((ms / (1000 * 60 * 60)) % 24) + 'h '
+            var days = Math.floor((ms / (1000 * 60 * 60 * 24))) + 'd '
+            time_dict = [days, hours, minutes, seconds]
+            time = ''
+            for (item of time_dict){
+                if (item[0]!=0){
+                    time +=item
+                }
+            }
+            console.log(time)
+            $('#time').val(time)
+        });
+    </script>
+{% endblock %}

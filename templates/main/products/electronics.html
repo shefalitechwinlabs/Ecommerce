@@ -19,7 +19,8 @@
                                 <p class="card-text"><strong>Rs. {{item.price}}</strong></p>
                             </div>
                             <div class="col-6">
-                                <a class="btn btn-outline-dark" type="button" onclick="loadDoc('{{item.id}}')">Add to my collection</a>
+                                <!-- <a class="btn btn-outline-dark" type="button" onclick="loadDoc('{{item.id}}')">Add to my collection</a> -->
+                                <a class="btn btn-outline-dark" type="button" id="{{item.id}}">Add to my collection</a>
                             </div>
                         </div>
                     </div>
@@ -28,16 +29,13 @@
         {% endfor %}
     </div>
     <script>
-        function loadDoc(id) {
-            const xhttp = new XMLHttpRequest();
-            xhttp.onload = function() {
-                var response = JSON.parse(xhttp.responseText)
-                document.getElementById("product").innerHTML = response.message;
-                document.getElementById("product").className = "messages "+response.type +" alert alert-"+response.type;
-            }
-            var url = "/add_collections?id="+id+"&page=electronics"
-            xhttp.open("GET",url);
-            xhttp.send();
-        }
+       $('a').click(function(){
+            $.get("/add_collections/",{id: this.id},
+                function(data){
+                    $('#product').attr('class', "messages "+data.type +" alert alert-"+data.type)
+                    $('#product').html(data.message)
+                }
+            );
+        });
     </script>
 {% endblock %}

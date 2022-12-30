@@ -154,39 +154,31 @@ def signup(request):
             # email verification mail system
             data = form.cleaned_data["email"]
             associated_users = ExtendUser.objects.filter(email=data)
-            print(associated_users)
-            try:
-                if associated_users.exists():
-                    print('user exist')
-                    for user in associated_users:
-                        subject = "Verify Your Email"
-                        email_template_name = "accounts/email_verification/email_verification_instruction.html"
-                        c = {
-                            "email": user.email,
-                            "domain": "127.0.0.1:8000",
-                            "site_name": "Website",
-                            "uid": urlsafe_base64_encode(force_bytes(user.pk)),
-                            "user": user,
-                            "token": default_token_generator.make_token(user),
-                            "protocol": "http",
-                        }
-                        email = render_to_string(email_template_name, c)
-                        try:
-                            send_mail(
-                                subject,
-                                email,
-                                "admin@example.com",
-                                [user.email],
-                                fail_silently=False,
-                            )
-                            print('email sent')
-                        except BadHeaderError:
-                            return HttpResponse("Invalid header found.")
-                        return redirect("/accounts/email_verification/done")
-            except:
-                messages.warning(request, "associated user not working")
-                print('associated user not working')
-                return render(request, "accounts/signup.html", context)
+            for user in associated_users:
+                subject = "Verify Your Email"
+                email_template_name = "accounts/email_verification/email_verification_instruction.html"
+                c = {
+                    "email": user.email,
+                    "domain": "127.0.0.1:8000",
+                    "site_name": "Website",
+                    "uid": urlsafe_base64_encode(force_bytes(user.pk)),
+                    "user": user,
+                    "token": default_token_generator.make_token(user),
+                    "protocol": "http",
+                }
+                email = render_to_string(email_template_name, c)
+                try:
+                    send_mail(
+                        subject,
+                        email,
+                        "admin@example.com",
+                        [user.email],
+                        fail_silently=False,
+                    )
+                    print('email sent')
+                except BadHeaderError:
+                    return HttpResponse("Invalid header found.")
+                return redirect("/accounts/email_verification/done")
         elif verify == False:
             form = SignupForm()
             context = {"form": form}
