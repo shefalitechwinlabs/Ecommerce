@@ -30,6 +30,7 @@
     </div>
     <script>
        $('a').click(function(){
+            console.log(this.id)
             $.get("/add_collections/",{id: this.id},
                 function(data){
                     $('#product').attr('class', "messages "+data.type +" alert alert-"+data.type)

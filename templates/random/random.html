@@ -7,7 +7,10 @@
     <option class="categories" value="{{category}}">{{category}}</option>
     {% endfor %}
 </select>
-<select id="products"></select>
+<select data-placeholder="Select Options" id="products" multiple>
+</select>
+<select data-placeholder="Select Options" id="product_detail" multiple>
+</select>
 <script id="products" multiple>
     $(document).ready(function () {
         $('#categories').select2();
@@ -26,6 +29,30 @@
                     $('#products').empty();
                     for (let i = 0; i < product_titles.length; i++) {
                         $('#products').append('<option>' + product_titles[i] + '</option>');
+                        $(document).ready(function () {
+                            $('#products').select2();
+                        });
+                        $('#products').change(function () {
+                            $.ajax({
+                                type: 'POST',
+                                url: '/random/',
+                                data: { products: $('#products').val() },
+                                success: function (product_details) {
+                                    if (product_details == 0) {
+                                        $('#product_detail').empty();
+                                    }
+                                    else {
+                                        $('#product_detail').empty();
+                                        $(document).ready(function () {
+                                            $('#product_detail').select2();
+                                        });
+                                        for (let i = 0; i < product_details.length; i++) {
+                                            $('#product_detail').append('<option>' + product_details[i] + '</option>');
+                                        }
+                                    }
+                                }
+                            })
+                        })
                     }
                 }
             }

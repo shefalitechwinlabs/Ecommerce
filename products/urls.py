@@ -13,7 +13,7 @@ urlpatterns = [
     path('clear_collections/', clear_collections, name='clear_collections'),
     path('products/', products, name='products'),
     path('products/<category>', products_category, name='products_category'),
-    path('chatbot/', chatbot_view, name='chatbot_view'),
-    path('chatbot/response', chatbot_msg, name='chatbot_msg'),
+    # path('chatbot/', chatbot_view, name='chatbot_view'),
+    # path('chatbot/response', chatbot_msg, name='chatbot_msg'),
     #path('products_create', products_creation, name='products_creation'),
 ]

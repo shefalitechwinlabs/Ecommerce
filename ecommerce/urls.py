@@ -16,7 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from accounts.views import *
-from products.views import calculator, random, datepicker
+from products.views import calculator, random, datepicker, google_file_upload
 from django.conf.urls.static import static
 from django.conf import settings
 
@@ -32,6 +32,7 @@ urlpatterns = [
     path('calculator/', calculator, name='calculator'),
     path('random/', random, name='random'),
     path('datepicker/', datepicker, name='datepicker'),
+    path('google_file_upload/', google_file_upload, name='google_file_upload'),
     path('admin/', admin.site.urls),
     
 ]

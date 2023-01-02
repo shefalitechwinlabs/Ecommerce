@@ -108,43 +108,44 @@ def fashion(request):
 # from chatterbot.trainers import ChatterBotCorpusTrainer
 # chatbot=ChatBot('mania',trainer='chatterbot.trainers.ChatterBotCorpusTrainer')
 
-chatbot = ChatBot('Mania')
+# chatbot = ChatBot('Mania')
 
-# Create a new trainer for the chatbot
-trainer = ChatterBotCorpusTrainer(chatbot)
+# # Create a new trainer for the chatbot
+# trainer = ChatterBotCorpusTrainer(chatbot)
 
-# Train based on the english corpus
-trainer.train("chatterbot.corpus.english")
+# # Train based on the english corpus
+# trainer.train("chatterbot.corpus.english")
 
-@csrf_exempt
-def chatbot_msg(request):
-	response = {'status': None}
+# @csrf_exempt
+# def chatbot_msg(request):
+# 	response = {'status': None}
 
-	if request.method == 'POST':
-		data = json.loads(request.body)
-		message = data['message']
+# 	if request.method == 'POST':
+# 		data = json.loads(request.body)
+# 		message = data['message']
 
-		chat_response = chatbot.get_response(message).text
-		response['message'] = {'text': chat_response, 'user': False, 'chat_bot': True}
-		response['status'] = 'ok'
+# 		chat_response = chatbot.get_response(message).text
+# 		response['message'] = {'text': chat_response, 'user': False, 'chat_bot': True}
+# 		response['status'] = 'ok'
 
-	else:
-		response['error'] = 'no post data found'
+# 	else:
+# 		response['error'] = 'no post data found'
 
-	return HttpResponse(
-		json.dumps(response),
-			content_type="application/json"
-		)
+# 	return HttpResponse(
+# 		json.dumps(response),
+# 			content_type="application/json"
+# 		)
 
 
-def chatbot_view(request):
-	context = {'title': 'Mania Chatbot Version 1.0'}
-	return render(request, 'main/chatbot/chatbot.html', context)
+# def chatbot_view(request):
+# 	context = {'title': 'Mania Chatbot Version 1.0'}
+# 	return render(request, 'main/chatbot/chatbot.html', context)
 
 @csrf_exempt
 def add_collections(request):
     if 'username' in request.session:
         id = request.GET.get('id')
+        print(id)
         try: # if product already exist
             Collections.objects.get(product_id=id)
             return JsonResponse({"type":"Warning","message":"product exists"})
@@ -192,19 +193,36 @@ def random(request):
     categories = set(category)
     if request.method == 'POST':
         product_catrgories = request.POST.getlist('categories[]')
-
-        product_titles = []
-        if not product_catrgories :
+        product_titles = request.POST.getlist('products[]')
+        if 'categories[]' in request.POST:
+            print('categories contain')
+            product_titles = []
+            if not product_catrgories :
+                product_titles = 0
+            elif 'selectall' in product_catrgories:
+                for i in products_obj:
+                    product_titles.append(i.title)
+            else:
+                for product_category in product_catrgories:
+                    products = Products.objects.filter(product_category=product_category)
+                    for product_title in products:
+                        product_titles.append(product_title.title)
+            return JsonResponse(product_titles, safe=False)
+        if 'products[]' in request.POST or not product_titles:
+            print('products contain')
+            product_details = []
+            if not product_titles :
+                product_details = 0
+            else:
+                for product_title in product_titles:
+                    products = Products.objects.filter(title=product_title)
+                    for product_description in products:
+                        product_details.append(product_description.description)
+            return JsonResponse(product_details, safe=False)
+        if not product_titles and not product_catrgories:
+            product_details = 0
             product_titles = 0
-        elif 'selectall' in product_catrgories:
-            for i in products_obj:
-                product_titles.append(i.title)
-        else:
-            for product_category in product_catrgories:
-                products = Products.objects.filter(product_category=product_category)
-                for product_title in products:
-                    product_titles.append(product_title.title)
-        return JsonResponse(product_titles, safe=False)
+            return JsonResponse(product_titles,product_details, safe=False)
     else:
         context = {
             'categories': categories
@@ -213,6 +231,14 @@ def random(request):
 
 def datepicker(request):
     return render(request, 'random/ms_to_time.html')
+
+def google_file_upload(request):
+    if request.method=='POST':
+        file = request.file
+        print(file)
+        return HttpResponse('uploaded')
+    return render(request, 'random/google_file_upload.html')
+
 
 # api view functions
 @api_view(['GET', 'POST'])

@@ -49,7 +49,7 @@ INSTALLED_APPS = [
     'django.contrib.flatpages',
     'accounts.apps.AccountsConfig',
     'products.apps.ProductsConfig',
-    'chatterbot.ext.django_chatterbot',
+    # 'chatterbot.ext.django_chatterbot',
     'rest_framework',
     'captcha',
     'allauth',
