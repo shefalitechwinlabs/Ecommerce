@@ -1,0 +1,6 @@
+{% extends 'main/base.html' %}
+
+{% block content %}
+<a href="{% url 'run_cron_script' %}" class="button">Run cron script</a>
+<a href="{% url 'stop_cron_script' %}" class="button">Stop cron script</a>
+{% endblock %}

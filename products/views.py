@@ -2,6 +2,8 @@ from django.shortcuts import render, redirect
 from django.http import JsonResponse, HttpResponse
 import json
 import requests
+import subprocess
+import os
 from accounts.models import ExtendUser, Profile
 from .models import *
 from django.shortcuts import get_object_or_404,render
@@ -17,6 +19,7 @@ from django.views.generic import View
 from chatterbot import ChatBot
 from chatterbot.ext.django_chatterbot import settings
 from chatterbot.trainers import ChatterBotCorpusTrainer
+import imdb
 
 
 # third party api code
@@ -185,6 +188,16 @@ def calculator(request):
     return render(request, 'main/calculator.html')
 
 @csrf_exempt
+def table(request):
+    search = imdb.IMDb()
+    # Using the Search movie method
+    movies = search.search_movie('koyla')
+    print(type(movies))
+    for movie in movies:
+        print(type(movie))
+    return render(request, 'random/table.html')
+
+@csrf_exempt
 def random(request):
     products_obj = Products.objects.all()
     category = []
@@ -229,8 +242,11 @@ def random(request):
         }
         return render(request, 'random/random.html', context)
 
-def datepicker(request):
-    return render(request, 'random/ms_to_time.html')
+def datatables(request):
+    return render(request, 'random/datatables.html')
+
+def loading_bar(request):
+    return render(request, 'Loadingbar/index.html')
 
 def google_file_upload(request):
     if request.method=='POST':
@@ -244,7 +260,22 @@ def google_file_upload(request):
 @api_view(['GET', 'POST'])
 def products(request):
     if request.method == 'GET':
-        data = serializers.serialize("json", Products.objects.all())
+        products_obj = Products.objects.all()
+        products_obj_values = Products.objects.all().values()
+        products_values_list = []
+        for product_details in products_obj_values:
+            product_values = []
+            for i in range(len(product_details)):
+                product_values.append(product_details[i])
+            print('product_values = ', product_values)
+            products_values_list.append(product_values)
+        Products_data = {
+            "draw": 1,
+            "recordsTotal": products_obj.count(),
+            "recordsFiltered": products_obj.count(),
+            "data": products_values_list
+        }
+        data = serializers.serialize("json", Products_data)
         return JsonResponse(json.loads(data), safe=False)
 
     if request.method == 'POST':
@@ -260,3 +291,37 @@ def products_category(request, category):
     products = Products.objects.filter(product_category=category)
     serializer = ProductSerializer(products, many=True)
     return JsonResponse({'products': serializer.data})
+
+# def products(request, category):
+#     products = Products.objects.filter(product_category=category)
+#     serializer = ProductSerializer(products, many=True)
+#     return JsonResponse({'products': serializer.data})
+
+# cronjob
+python_path = subprocess.run(["which", "python"], stdout=subprocess.PIPE).stdout.strip().decode("utf-8")
+command = "/usr/bin/python /Downloads/Ecommerce/products/management/commands/command.py cron"
+def cron_script(request):
+    # subprocess.run(['', 'crontab -e'])
+    return render(request, "random/cronjob.html")
+
+def run_command(command):
+    result = subprocess.run(command.split(), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    return result.stdout.decode("utf-8").strip()
+
+def run_cron_script(request):
+    subprocess.run([python_path, "/Downloads/Ecommerce/products/management/commands/command.py cron"])
+    cron_job = f"* * * * * {command}\n"
+    cron_file = "/etc/crontab" if os.name == "posix" else "/usr/lib/cron/tabs/techwin"
+    with open(cron_file, "a") as f:
+        f.write(cron_job)
+    return render(request, "random/cronstart.html", {})
+
+def stop_cron_script(request):
+    subprocess.run([python_path, "products/cron_job.py", "stop"])
+    cron_jobs = run_command("crontab -l").split("\n")
+    cron_file = "sudo nano /etc/crontab" if os.name == "posix" else "/usr/lib/cron/tabs/techwin"
+    with open(cron_file, "w") as f:
+        for job in cron_jobs:
+            if command not in job:
+                f.write(job + "\n")
+    return render(request, "random/cronstop.html", {})

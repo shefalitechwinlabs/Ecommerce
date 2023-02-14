@@ -1,0 +1,51 @@
+<html>
+    <header>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+        
+    </header>
+    <body>
+        <div class="d-flex flex-row mt-3 audio">
+            <div class="dropdown">
+                <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-auto-close="outside" data-bs-toggle="dropdown" aria-expanded="false">
+                    dropdown<!-- <i class="fe fe-check-square audio" data-toggle="tooltip" data-original-title="Summarize"></i> -->
+                </button>
+                <div class="dropdown-menu" >
+                    <div class="dropdown-item">
+                        <input type="checkbox" id="summary" value="summary" class="checkbox">
+                        <label for="summary">Summary</label>
+                    </div>
+                    <div class="dropdown-item">
+                        <input type="checkbox" id="reason_for_call" value="reason_for_call" class="checkbox">
+                        <label for="reason_for_call">Reason for Call</label>
+                    </div>
+                    <div class="dropdown-item">
+                        <input type="checkbox" id="next_action_item" value="next_action_item" class="checkbox">
+                        <label for="next_action_item">Next action items</label>
+                    </div>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item">
+                    <button class="btn btn-primary" id="btn_summarize" onclick="checkbox(this);">
+                        Summarize
+                    </button>
+                </a>
+            </div>
+        </div>
+        <script>
+            $(document).ready(function(){
+                function checkbox(e){
+                    console.log(e)
+                    $.notify({
+                        title: "You MUST have some Foo !",
+                        button: 'YES !'
+                    }, { 
+                        style: 'foo',
+                        autoHide: false,
+                        clickToHide: false
+                    })
+                }
+            });
+            src="https://cdnjs.cloudflare.com/ajax/libs/notify/0.4.2/notify.min.js"
+        </script>
+    </body>
+</html>

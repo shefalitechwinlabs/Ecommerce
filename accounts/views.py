@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib import auth
+from django.contrib.auth.models import User
 from .forms import *
 from django.contrib.auth.tokens import default_token_generator
 from django.utils.encoding import force_bytes

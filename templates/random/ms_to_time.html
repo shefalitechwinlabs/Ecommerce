@@ -2,29 +2,40 @@
 
 {% block content %}
     <div id="get_ms" style="background: #fff; cursor: pointer; padding: 5px 10px; border: 1px solid #ccc; width: 100%">
-        <h5>Milliseconds</h5>
-        <input type="number" id="milliseconds" val="">
+        <h5>Value</h5>
+        <input type="text" id="value" val="">
     </div>
+    <div class="value_length"></div>
     <div id="get_time" style="background: #fff; cursor: pointer; padding: 5px 10px; border: 1px solid #ccc; width: 100%">
         <h5>Time</h5>
-        <input type="text" id="time" val="">
+        <input type="text" id="get_val" val="">
     </div>
+   
     <script type="text/javascript">
-        $('#get_ms').on('input propertychange',function() {
-            var ms = $('#milliseconds').val();
-            var seconds = Math.floor((ms / 1000) % 60) + 's'
-            var minutes = Math.floor((ms / (1000 * 60) % 60)) + 'm '
-            var hours = Math.floor((ms / (1000 * 60 * 60)) % 24) + 'h '
-            var days = Math.floor((ms / (1000 * 60 * 60 * 24))) + 'd '
-            time_dict = [days, hours, minutes, seconds]
-            time = ''
-            for (item of time_dict){
-                if (item[0]!=0){
-                    time +=item
+        $('#value').change(function() {
+            var val = $('#value').val();
+            var check_val = /^\d+$/.test(val)
+            var val_length = val.toString().length
+            if (Math.floor(val_length) > 2 ){
+                var seconds = Math.floor((val / 1000) % 60) + 's'
+                var minutes = Math.floor((val / (1000 * 60) % 60)) + 'm '
+                var hours = Math.floor((val / (1000 * 60 * 60)) % 24) + 'h '
+                var days = Math.floor((val / (1000 * 60 * 60 * 24))) + 'd '
+                var week = Math.floor((val / (1000 * 60 * 60 * 24) % 7)) + 'w '
+                time_dict = [week, days, hours, minutes, seconds]
+                time = ''
+                for (item of time_dict){ 
+                    if (item[0]!=0){
+                        time +=item
+                    }
                 }
+                console.log(val_length)
+                $('.value_length').html('length of input value is' + val_length)
+                $('#get_val').val(time)
             }
-            console.log(time)
-            $('#time').val(time)
+            else {
+                $('.value_length').html('given input is not a number')
+            }
         });
     </script>
 {% endblock %}
