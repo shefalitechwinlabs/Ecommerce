@@ -15,6 +15,7 @@ urlpatterns = [
     path('products/<category>', products_category, name='products_category'),
     path("stop_cron_script/", stop_cron_script, name="stop_cron_script"),
     path("run_cron_script/", run_cron_script, name="run_cron_script"),
+    path("create_backup/", create_backup, name="create_backup"),
     path("cron_script/", cron_script, name="cron_script"),
     # path('chatbot/', chatbot_view, name='chatbot_view'),
     # path('chatbot/response', chatbot_msg, name='chatbot_msg'),
