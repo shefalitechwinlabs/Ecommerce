@@ -34,6 +34,9 @@ headers = {
 
 response = requests.request("GET", url, headers=headers, params=querystring)
 
+from pymongo import MongoClient
+import subprocess
+
 def home(request):
     # to show profile in navbar or else sign in
     print(response.text)
@@ -43,6 +46,14 @@ def home(request):
         return render(request, 'main/home.html', {'profile':profile}) 
     else:
         return render(request, 'main/home.html')
+
+def create_backup(request):
+    client = MongoClient('localhost', 27017)
+    databases = client.list_databases()
+    for db in databases:
+        db_name = db['name']
+        subprocess.run(['mongodump',  '--out=/Users/admin/Downloads/Ecommerce_backup/' + db_name, '-d=' + db_name])
+    return HttpResponse('backup_created')
 
 def electronics(request):
     electronics_obj = Products.objects.filter(product_category='Electronics')
