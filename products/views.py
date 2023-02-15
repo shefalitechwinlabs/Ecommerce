@@ -16,10 +16,10 @@ from rest_framework import status
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic.base import TemplateView
 from django.views.generic import View
-from chatterbot import ChatBot
-from chatterbot.ext.django_chatterbot import settings
-from chatterbot.trainers import ChatterBotCorpusTrainer
-import imdb
+# from chatterbot import ChatBot
+# from chatterbot.ext.django_chatterbot import settings
+# from chatterbot.trainers import ChatterBotCorpusTrainer
+# import imdb
 
 
 # third party api code
