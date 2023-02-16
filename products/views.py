@@ -2,6 +2,8 @@ from django.shortcuts import render, redirect
 from django.http import JsonResponse, HttpResponse
 import json
 import bson
+import re
+import pandas as pd
 import requests
 import subprocess
 import os
@@ -273,37 +275,15 @@ def google_file_upload(request):
 # @api_view(['GET', 'POST'])
 @csrf_exempt
 def products(request):
-    if request.method == 'POST':
-        print(list(request.POST.items()))
-        draw = request.POST['draw']
-        print('draw = ', draw)
-        row_per_page = request.POST['length']
-        print('row_per_page = ', row_per_page)
-        start = request.POST['start'] # records needed for per page
-        print('start = ', start)
-        order = request.POST.getlist('order[]')
-        print('order = ', order)
-        search = request.POST.getlist('search[]')
-        columns_list = request.POST.getlist('columns[]') # get columns list
-        print('columns_list = ',columns_list)
-        # column_index = list(order)[0]['column'] # tells index of column
-        # columns_name = columns_list[column_index]['data'] # column's name based on column index
-        # column_sort_order = order[0]['column'] # order asc/dec
-        # search_value = search['value'] # search value
-        print('draw = ', type(draw))
-        print('row_per_page = ', type(row_per_page))
-        print('order = ', type(order))
-        print('start = ', type(start))
-        print('search = ', type(search))
-        print('columns_list = ', type(columns_list))
-        # print('column_index = ', type(column_index))
-        # print('columns_name = ', columns_name)
-        # print('column_sort_order = ', column_sort_order)
-        # print('search_value = ', search_value)
+    if request.method == 'GET':
+        draw = request.GET['draw']
+        row_per_page = request.GET['length']
+        start = request.GET['start'] # records needed for per page
+        column_index = request.GET.get('order[0][column]')
 
         products_obj = Products.objects.all()
         products_obj_values = products_obj.values()
-
+        
         list_of_products_data = []
 
         for product_dict in products_obj_values:
@@ -316,7 +296,32 @@ def products(request):
             product_dict.pop('id')
             DT_row.update(product_dict)
             list_of_products_data.append(DT_row)
-        print(list_of_products_data)
+        df_list_of_products_data = pd.DataFrame(list_of_products_data)
+
+        # sorting by columns
+        column_name = request.GET.get(f'columns[{column_index}][data]') # column's name based on column index
+        column_sort_order = request.GET.get('order[0][dir]')
+        if column_sort_order == 'desc':
+            sort_order = False
+        else:
+            sort_order = True
+        df_list_of_products_data = df_list_of_products_data.sort_values(by=[column_name], ascending=sort_order)
+        list_of_products_data = df_list_of_products_data.to_dict(orient='records')
+
+        # searching by regex
+        search = request.GET.getlist('search[value]')
+        if search[0]:
+            columns_list = df_list_of_products_data.columns.to_list()
+            search_filter = df_list_of_products_data[columns_list].apply(
+                            lambda x: x.str.contains(
+                                f'{search[0]}',
+                                regex=True,
+                            )
+                        ).any(axis=1)
+            search_filtered = df_list_of_products_data[search_filter].to_dict(orient='records')
+            # row_id_search_filtered = search_filtered['DT_RowId'].to
+            list_of_products_data = search_filtered
+
         total = products_obj.count()
         total_filter = len(list_of_products_data)
         list_of_products_data = list_of_products_data[ int(start): int(start) + int(row_per_page) ]
@@ -328,31 +333,16 @@ def products(request):
             "recordsFiltered": total_filter,
             "data": list_of_products
         }
-        print(products_data)
-        # for product_details in products_obj_values:
-        #     product_values = []
-        #     print(product_details)
-        #     for i in product_details:
-        #         product_values.append(product_details[i])
-        #     list_of_products_data.append(product_values)
-        # Products_data = {
-        #     "draw": 1,
-        #     "recordsTotal": products_obj.count(),
-        #     "recordsFiltered": products_obj.count(),
-        #     "data": list_of_products_data
-        # }
         return JsonResponse(products_data, safe=False)
 
-        return HttpResponse(0)
-
-    if request.method == 'POST':
-        serializer = ProductSerializer(data=request.data)
-        print(serializer)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        else:
-             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    # if request.method == 'POST':
+    #     serializer = ProductSerializer(data=request.data)
+    #     print(serializer)
+    #     if serializer.is_valid():
+    #         serializer.save()
+    #         return Response(serializer.data, status=status.HTTP_201_CREATED)
+    #     else:
+    #          return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 def products_category(request, category):
     products = Products.objects.filter(product_category=category)
