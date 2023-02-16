@@ -3,37 +3,31 @@
 {% block content %}
     <table id="table_id" class="display nowrap">
         <thead>
-            <tr>
-                <th>Column 1</th>
-                <th>Column 2</th>
-            </tr>
+            <th>Title</th>
+            <th>Description</th>
+            <th>Price</th>
+            <th>Image</th>
+            <th>Product Category</th>
         </thead>
         <tbody>
-            <tr>
-                <td>Row 1 Data 1</td>
-                <td>Row 1 Data 2</td>
-            </tr>
-            <tr>
-                <td>Row 2 Data 1</td>
-                <td>Row 2 Data 2</td>
-            </tr>
         </tbody>
     </table>
     <script type="text/javascript">
         $(document).ready( function () {
             $('#table_id').DataTable( {
-                serverSide: true,
                 processing: true,
+                serverSide: true,
+                order: [0, 'desc'],
                 ajax:{
-                    'url': '/products'
+                    'url': '/products?columns=["title","description","price","image","product_category"]&order="title","description","price","image","product_category"'
                 },
-                // columns: [
-                //     { "data": "title" },
-                //     { "data": "description" },
-                //     { "data": "price" },
-                //     { "data": "image" },
-                //     { "data": "product_category" }
-                // ]
+                columns: [
+                    { 'data': 'title' },
+                    { 'data': 'description' },
+                    { 'data': 'price' },
+                    { 'data': 'image' },
+                    { 'data': 'product_category' }
+                ]
             })
         } );
     </script>

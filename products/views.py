@@ -271,25 +271,77 @@ def google_file_upload(request):
 @api_view(['GET', 'POST'])
 def products(request):
     if request.method == 'GET':
-        products_obj = Products.objects.all()
-        products_obj_values = Products.objects.all().values()
-        products_values_list = []
-        for product_details in products_obj_values:
-            product_values = []
-            for i in range(len(product_details)):
-                product_values.append(product_details[i])
-            print('product_values = ', product_values)
-            products_values_list.append(product_values)
-        Products_data = {
-            "draw": 1,
-            "recordsTotal": products_obj.count(),
-            "recordsFiltered": products_obj.count(),
-            "data": products_values_list
-        }
-        data = serializers.serialize("json", Products_data)
-        return JsonResponse(json.loads(data), safe=False)
+        draw = request.GET['draw']
+        print('draw = ', draw)
+        row_per_page = request.GET['length']
+        print('row_per_page = ', row_per_page)
+        start = request.GET['start'] # records needed for per page
+        print('start = ', start)
+        order = request.GET.get('order')
+        print('order = ', order)
+        search = request.GET.get('search')
+        columns_list = request.GET.get('columns') # get columns list
+        print('columns_list = ',columns_list)
+        column_index = order[0]['column'] # tells index of column
+        columns_name = columns_list[column_index]['data'] # column's name based on column index
+        column_sort_order = order[0]['column'] # order asc/dec
+        search_value = search['value'] # search value
+        # print('draw = ', type(draw))
+        # print('row_per_page = ', type(row_per_page))
+        # print('order = ', type(order))
+        # print('start = ', type(start))
+        # print('search = ', type(search))
+        print('columns_list = ', columns_list)
+        print('column_index = ', column_index)
+        print('columns_name = ', columns_name)
+        print('column_sort_order = ', column_sort_order)
+        print('search_value = ', search_value)
 
-    if request.method == 'POST':
+        products_obj = Products.objects.all()
+        products_obj_values = products_obj.values()
+
+        list_of_products_data = []
+
+        for product_dict in products_obj_values:
+            DT_row = {
+                "DT_RowId": "row_"+str(product_dict['id']),
+                "DT_RowData": {
+                    "pkey": product_dict['id']
+                }, 
+            }
+            product_dict.pop('id')
+            DT_row.update(product_dict)
+            list_of_products_data.append(DT_row)
+
+        total = products_obj.count()
+        total_filter = len(list_of_products_data)
+        list_of_products_data = list_of_products_data[ int(start): int(start) + int(row_per_page) ]
+        list_of_products = list_of_products_data
+        
+        products_data = {
+            "draw": int(draw),
+            "recordsTotal": total,
+            "recordsFiltered": total_filter,
+            "data": list_of_products
+        }
+
+        # for product_details in products_obj_values:
+        #     product_values = []
+        #     print(product_details)
+        #     for i in product_details:
+        #         product_values.append(product_details[i])
+        #     list_of_products_data.append(product_values)
+        # Products_data = {
+        #     "draw": 1,
+        #     "recordsTotal": products_obj.count(),
+        #     "recordsFiltered": products_obj.count(),
+        #     "data": list_of_products_data
+        # }
+        return JsonResponse(products_data, safe=False)
+
+        return HttpResponse(0)
+
+    if request.method == 'GET':
         serializer = ProductSerializer(data=request.data)
         print(serializer)
         if serializer.is_valid():
