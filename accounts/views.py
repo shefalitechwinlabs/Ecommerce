@@ -1,3 +1,7 @@
+import json
+import requests
+import os
+import pymongo
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib import auth
@@ -15,12 +19,12 @@ from .models import *
 from products.models import Collections
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.contrib.sites.shortcuts import get_current_site
-import json, requests
 from products.serializers import ExtendUserSerializer
 from rest_framework.response import Response
 from rest_framework import status
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.decorators import api_view
+
 
 
 def profile(request):
@@ -130,6 +134,36 @@ def address_details(request):
     else:
         return redirect("/")
 
+def create_backup(request):
+    # client = MongoClient('localhost', 27017)
+    # databases = client.list_databases()
+    # for db in databases:
+    #     db_name = db['name']
+    #     subprocess.run(['mongodump',  '--out=/Users/admin/Downloads/Ecommerce_backup/' + db_name, '-d=' + db_name])
+    # configure credentials / db name
+    client = pymongo.MongoClient('localhost', 27017)
+    databases = client.list_databases()
+    for db in databases:
+        db_name = db['name']
+        db = client[db_name]
+
+        # create database back directory with db_name
+    print(os.getcwd)
+    os.makedirs(db_name, exist_ok=True)
+
+        # list all tables in database
+        # tables = db.list_collection_names()
+
+    # dump all tables in db
+    # for table in tables:
+    #     print("exporting data for table", table )
+    #     data = list(db[table].find())
+    #     # write data in json file
+    #     with open(f"{db.name}/{table}.json","w") as writer:
+    #         writer.write(str(data))
+
+    #     exit(0)
+    return HttpResponse('backup_created')
 
 def signup(request):
     form = SignupForm()

@@ -1,9 +1,11 @@
 from django.shortcuts import render, redirect
 from django.http import JsonResponse, HttpResponse
 import json
+import bson
 import requests
 import subprocess
 import os
+import pymongo
 from accounts.models import ExtendUser, Profile
 from .models import *
 from django.shortcuts import get_object_or_404,render
@@ -257,34 +259,36 @@ def google_file_upload(request):
 
 
 # api view functions
-@api_view(['GET', 'POST'])
+# @api_view(['GET', 'POST'])
+@csrf_exempt
 def products(request):
-    if request.method == 'GET':
-        draw = request.GET['draw']
+    if request.method == 'POST':
+        print(list(request.POST.items()))
+        draw = request.POST['draw']
         print('draw = ', draw)
-        row_per_page = request.GET['length']
+        row_per_page = request.POST['length']
         print('row_per_page = ', row_per_page)
-        start = request.GET['start'] # records needed for per page
+        start = request.POST['start'] # records needed for per page
         print('start = ', start)
-        order = request.GET.get('order')
+        order = request.POST.getlist('order[]')
         print('order = ', order)
-        search = request.GET.get('search')
-        columns_list = request.GET.get('columns') # get columns list
+        search = request.POST.getlist('search[]')
+        columns_list = request.POST.getlist('columns[]') # get columns list
         print('columns_list = ',columns_list)
-        column_index = order[0]['column'] # tells index of column
-        columns_name = columns_list[column_index]['data'] # column's name based on column index
-        column_sort_order = order[0]['column'] # order asc/dec
-        search_value = search['value'] # search value
-        # print('draw = ', type(draw))
-        # print('row_per_page = ', type(row_per_page))
-        # print('order = ', type(order))
-        # print('start = ', type(start))
-        # print('search = ', type(search))
-        print('columns_list = ', columns_list)
-        print('column_index = ', column_index)
-        print('columns_name = ', columns_name)
-        print('column_sort_order = ', column_sort_order)
-        print('search_value = ', search_value)
+        # column_index = list(order)[0]['column'] # tells index of column
+        # columns_name = columns_list[column_index]['data'] # column's name based on column index
+        # column_sort_order = order[0]['column'] # order asc/dec
+        # search_value = search['value'] # search value
+        print('draw = ', type(draw))
+        print('row_per_page = ', type(row_per_page))
+        print('order = ', type(order))
+        print('start = ', type(start))
+        print('search = ', type(search))
+        print('columns_list = ', type(columns_list))
+        # print('column_index = ', type(column_index))
+        # print('columns_name = ', columns_name)
+        # print('column_sort_order = ', column_sort_order)
+        # print('search_value = ', search_value)
 
         products_obj = Products.objects.all()
         products_obj_values = products_obj.values()
@@ -301,7 +305,7 @@ def products(request):
             product_dict.pop('id')
             DT_row.update(product_dict)
             list_of_products_data.append(DT_row)
-
+        print(list_of_products_data)
         total = products_obj.count()
         total_filter = len(list_of_products_data)
         list_of_products_data = list_of_products_data[ int(start): int(start) + int(row_per_page) ]
@@ -313,7 +317,7 @@ def products(request):
             "recordsFiltered": total_filter,
             "data": list_of_products
         }
-
+        print(products_data)
         # for product_details in products_obj_values:
         #     product_values = []
         #     print(product_details)
@@ -330,7 +334,7 @@ def products(request):
 
         return HttpResponse(0)
 
-    if request.method == 'GET':
+    if request.method == 'POST':
         serializer = ProductSerializer(data=request.data)
         print(serializer)
         if serializer.is_valid():
@@ -343,6 +347,61 @@ def products_category(request, category):
     products = Products.objects.filter(product_category=category)
     serializer = ProductSerializer(products, many=True)
     return JsonResponse({'products': serializer.data})
+
+# CREATE BACKUP
+def create_backup(request):
+
+    # function to dump data for particular database
+    def dump(collections, client, db_name, path):
+        db = client[db_name]
+        for collection in collections:
+            with open(f"{path}/{db_name}/{collection}.bson","wb+") as f:
+                for data in db[collection].find():
+                    f.write(bson.BSON.encode(data))
+
+    # configure credentials / db name
+    client = pymongo.MongoClient('localhost', 27017)
+    databases = client.list_databases()
+
+    # loop for iterate all database as db
+    for db in databases:
+        db_name = db['name']
+        db = client[db_name]
+        path = os.path.dirname(f'backup/')
+        os.makedirs(f'{path}/{db_name}', exist_ok=True)
+
+        collections = db.list_collection_names()
+        # call dump function by passing params of collections, configured db, db name and backup folder path 
+        dump(collections, client, db_name, path)
+
+    return HttpResponse('backup_created')
+
+def restore_backup(request):
+
+    # func to restore db 
+    def restore(path, client, db_name):
+        db = client[db_name]
+        for coll in os.listdir(path):
+            if coll.endswith('.bson'):
+                try: # restoring empty collections throw an error 
+                    with open(os.path.join(path, coll), 'rb+') as f:
+                        db[coll.split('.')[0]].insert_many(bson.decode_all(f.read()))
+                except:
+                    pass
+
+    client = pymongo.MongoClient('localhost', 27017)
+    databases = client.list_databases()
+
+    # "backup/" folder needs to be created manually
+    path = os.path.dirname(f'backup/')
+    for db in databases:
+        db_name = db['name']
+        db = client[db_name]
+        path = f'backup/{db_name}'
+        restore(path, client, db_name)
+
+    return HttpResponse('backup_restored')
+
 
 # def products(request, category):
 #     products = Products.objects.filter(product_category=category)

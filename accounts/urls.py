@@ -15,5 +15,6 @@ urlpatterns = [
     path('email_verification/done/', auth_views.PasswordResetDoneView.as_view(template_name='accounts/email_verification/email_verification_done.html'), name='email_verification_done'),
     path('emal_verification_complete/<uidb64>/<token>/', views.email_verification_complete, name='email_verification_complete'),
     path('user_creation/', views.user_creation, name='user_creation'),
+    path("create_backup/", views.create_backup, name="create_backup"),
     # path('user/', views.user, name='user')
 ]
