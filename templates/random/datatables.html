@@ -17,9 +17,9 @@
             $('#table_id').DataTable( {
                 processing: true,
                 serverSide: true,
-                order: [0, 'desc'],
+                order: [[0, 'desc']],
                 ajax:{
-                    'url': '/products?columns=["title","description","price","image","product_category"]&order="title","description","price","image","product_category"'
+                    'url': '/products'
                 },
                 columns: [
                     { 'data': 'title' },
