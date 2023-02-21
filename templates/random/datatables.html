@@ -17,6 +17,12 @@
             $('#table_id').DataTable( {
                 processing: true,
                 serverSide: true,
+                order: [0, 'desc'],
+                'search': {
+                    'regex': true,
+                    'smart': true,
+                    'caseInsen': false
+                },
                 order: [[0, 'desc']],
                 ajax:{
                     'url': '/products'
