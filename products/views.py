@@ -319,7 +319,6 @@ def products(request):
                             )
                         ).any(axis=1)
             search_filtered = df_list_of_products_data[search_filter].to_dict(orient='records')
-            # row_id_search_filtered = search_filtered['DT_RowId'].to
             list_of_products_data = search_filtered
 
         total = products_obj.count()
