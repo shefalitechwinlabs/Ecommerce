@@ -19,6 +19,7 @@ urlpatterns = [
     path("cron_script/", cron_script, name="cron_script"),
     path("create_backup/", create_backup, name="create_backup"),
     path("restore_backup/", restore_backup, name="restore_backup"),
+    path("file_transfer_to_ftp/", file_transfer_to_ftp, name="file_transfer_to_ftp"),
     # path('chatbot/', chatbot_view, name='chatbot_view'),
     # path('chatbot/response', chatbot_msg, name='chatbot_msg'),
     #path('products_create', products_creation, name='products_creation'),
