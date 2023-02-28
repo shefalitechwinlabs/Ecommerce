@@ -1,14 +1,19 @@
 from django.shortcuts import render, redirect
 from django.http import JsonResponse, HttpResponse
+from ftp_server.sftp_script import connect, get_dir
 import json
 import bson
 import re
+import ssl
 import pandas as pd
 import requests
 import subprocess
 import os
 import pymongo
+import ftplib
+import pysftp
 from accounts.models import ExtendUser, Profile
+# from ftp_server.ftp_script import tyFTP
 from .models import *
 from django.shortcuts import get_object_or_404,render
 from django.contrib import messages
@@ -436,3 +441,12 @@ def stop_cron_script(request):
             if command not in job:
                 f.write(job + "\n")
     return render(request, "random/cronstop.html", {})
+
+def file_transfer_to_ftp(request):
+
+    FTP_HOST = '20.245.98.99'
+    FTP_PORT = 8001
+    FTP_USER = 'ubuntu'
+    FTP_PASS = 'password'
+    FTP_KEY = '/Users/admin/Downloads/CAI_Keys/TL/id_rsa_2.pem'
+    return HttpResponse('file transferred')
